@@ -269,5 +269,11 @@ class FactCheckResult:
     
 # ---------- Checker ----------
 
+class FactChecker:
+    def __init__(self, ):
+        pass
+
+# ---------- Runner ----------
+
 if __name__ == "__main__":
     print("Work in progress")
