@@ -74,9 +74,9 @@ def tld_extract(domain: str) -> str:
         'localhost'
     """
     ext = tldextract.extract(domain)
-    if not ext.registered_domain:
+    if not ext.top_domain_under_public_suffix:
         return domain.lower()
-    return ext.registered_domain.lower()
+    return ext.top_domain_under_public_suffix.lower()
 
 
 def domain_from_url(url: str) -> Optional[str]:
@@ -267,13 +267,155 @@ class FactCheckResult:
     evidence: List[Evidence]
     message: List[str]
     
+def etld1(domain: str) -> str:
+    """Extract eTLD+1 from a domain, or return the original domain if not possible.
+
+    Args:
+        domain (str): The domain to extract from.
+
+    Returns:
+        str: The eTLD+1 or the original domain.
+    """
+    ext = tldextract.extract(domain)
+    if not ext.registered_domain:
+        return domain.lower()
+    return ext.registered_domain.lower()
+
 # ---------- Checker ----------
 
 class FactChecker:
-    def __init__(self, ):
-        pass
+    def __init__(self):
+        self.brands = load_brands()
+        self.tld_risks = load_tld_risks()
+        self.phrases = load_phrases()
+        
+    def extract_entities_and_claims(self, text:str) -> Tuple[List[str], Dict[str, List[str]]]:
+        # TODO: Add NER with spacy or similar
+        # NOTE: For now: Minimal approach with regex and phrase matching
+        brands_found = []
+        lowered = text.lower()
+        
+        for brand in self.brands.keys():
+            if brand in lowered:
+                brands_found.append(brand)
+        
+        claims = {k: [] for k in self.phrases}
+        for cat, plist in self.phrases.items():
+            for phrase in plist:
+                if phrase.lower() in lowered:
+                    claims[cat].append(phrase)
+        
+        return list(dict.fromkeys(brands_found)), claims
 
+    def check_urls(self, urls: List[str]) -> Tuple[float, List[Evidence], Dict[str, float]]:
+        obf_score = 0.0
+        tld_score = 0.0
+        evidence = []
+        
+        for u in urls:
+            d = domain_from_url(u)
+            if not d:
+                continue
+            
+            # obfuscation checks
+            flags = {
+                "punycode": d.startswith("xn--"),
+                "ip_literal": is_ip_literal(d),
+                "hex_encoding": has_hex_encoding(u),
+                "at_symbol": has_at_symbol(u),
+                "subdomain_count": count_subdomains(d) > 2
+            }
+            
+            if any(flags.values()):
+                obf_score = max(obf_score, 0)
+                evidence.append(Evidence("urkl_obfuscation", {"url": u, **flags}))
+            
+            # tld risk check
+            ext = tldextract.extract(d)
+            tld = (ext.suffix or "").lower()
+            
+            if tld:
+                severity = self.tld_risks.get(tld)
+                if severity:
+                    score = SEVERITY_SCORES.get(severity, 0.0)
+                    tld_score = max(tld_score, score)
+                    evidence.append(Evidence("tld_risk", {"url": u, "tld": tld, "severity": severity, "score": score}))
+                    
+        return max(obf_score, 0.0), evidence, {"url_obfuscation": obf_score, "tld_risk": tld_score}
+    
+    def check_brand_impersonation(self, brands_found: List[str], urls: List[str], sender_email: Optional[str] = None) -> Tuple[float, List[Evidence], Optional[str]]:
+        sender_domain_etld1 = None
+        if sender_email and "@" in sender_email:
+            sender_domain_etld1 = etld1(sender_email.split("@")[-1])
+            
+        link_domains = [etld1(domain_from_url(u) or "") for u in urls if domain_from_url(u)]
+        mismatch = 0.0
+        evidence = []
+        
+        for brand in brands_found:
+            officials = self.brands.get(brand)
+            if not officials:
+                continue
+            
+            official_etld1 = etld1(officials)
+            bad_links = [d for d in link_domains if d and d != official_etld1]
+            sender_mismatch = (sender_domain_etld1 and sender_domain_etld1 != official_etld1)
+            
+            if bad_links or sender_mismatch:
+                mismatch = 1.0
+                evidence.append(Evidence("brand_impersonation", {
+                    "brand": brand,
+                    "official_domain": official_etld1,
+                    "sender_domain": sender_domain_etld1,
+                    "link_domains": list(sorted(set(bad_links))),
+                }))
+
+        return mismatch, evidence, sender_domain_etld1
+    
+    def claim_risk_score(self, claim_hits: Dict[str, List[str]]) -> Tuple[float, List[Evidence]]:
+        pass
+    
+    def check(self, email_text: str, sender_email: Optional[str] = None) -> FactCheckResult:
+        pass
+        
 # ---------- Runner ----------
 
 if __name__ == "__main__":
+    # Testing utilities (general functionality, removing duplicates and preserving order)
+    text = "Check out https://example.com/path?query=1 and http://sub.domain.co.uk! Also visit https://example.com/path?query=1."
+    urls = extract_urls(text)
+    print("Extracted URLs:", urls)
+    for url in urls:
+        domain = domain_from_url(url)
+        tld = tld_extract(domain)
+        subdomain_count = count_subdomains(domain)
+        ip_check = is_ip_literal(domain)
+        hex_check = has_hex_encoding(url)
+        at_check = has_at_symbol(url)
+        
+        print(f"URL: {url}")
+        print(f"  Domain: {domain}")
+        print(f"  TLD: {tld}")
+        print(f"  Subdomain Count: {subdomain_count}")
+        print(f"  Is IP Literal: {ip_check}")
+        print(f"  Has Hex Encoding: {hex_check}")
+        print(f"  Has '@' Symbol: {at_check}")
+        
+
+    # Testing loaders
+    tlds = load_tld_risks()
+    brands = load_brands()
+    phrases = load_phrases()
+    
+    print(f"Loaded {len(tlds)} TLD risks")
+    print(f"Loaded {len(brands)} brands")
+    print(f"Loaded {len(phrases)} phrase categories")
+    
     print("Work in progress")
+    
+    # Main checker test
+    email_text = """
+    Dear user, your PayPal account is locked. Verify your account within 24 hours:
+    https://xn--paypa1-secure-login.example.tk/login
+    """
+    fc = FactChecker()
