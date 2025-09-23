@@ -237,7 +237,7 @@ def load_tld_risks(path="data/fact_checking/clean_tlds.csv") -> Dict[str, str]:
     return risks
 
 def load_phrases(path="data/fact_checking/phrases.json") -> Dict[str, List[str]]:
-    """Load phrases from JSON fileß
+    """Load phrases from JSON file
 
     Args:
         path (str): Path to JSON file
@@ -277,9 +277,9 @@ def etld1(domain: str) -> str:
         str: The eTLD+1 or the original domain.
     """
     ext = tldextract.extract(domain)
-    if not ext.registered_domain:
+    if not ext.top_domain_under_public_suffix:
         return domain.lower()
-    return ext.registered_domain.lower()
+    return ext.top_domain_under_public_suffix.lower()
 
 # ---------- Checker ----------
 
@@ -327,8 +327,9 @@ class FactChecker:
             }
             
             if any(flags.values()):
-                obf_score = max(obf_score, 0)
-                evidence.append(Evidence("urkl_obfuscation", {"url": u, **flags}))
+                triggered = sum(bool(v) for v in flags.values())
+                obf_score = max(obf_score, min(1.0, triggered / 5.0)) # finer grained score in [0, 1]
+                evidence.append(Evidence("url_obfuscation", {"url": u, **flags}))
             
             # tld risk check
             ext = tldextract.extract(d)
@@ -373,49 +374,74 @@ class FactChecker:
         return mismatch, evidence, sender_domain_etld1
     
     def claim_risk_score(self, claim_hits: Dict[str, List[str]]) -> Tuple[float, List[Evidence]]:
-        pass
-    
-    def check(self, email_text: str, sender_email: Optional[str] = None) -> FactCheckResult:
-        pass
+        hits = sum(len(v) for v in claim_hits.values())
+        score = 0.0
         
+        if hits >= 3: score = 1.0
+        elif hits == 2: score = 0.66
+        elif hits == 1: score = 0.33
+        
+        ev = []
+        
+        if hits:
+            ev.append(Evidence("claim_risk", claim_hits))
+
+        return score, ev
+    def check(self, email_text: str, sender_email: Optional[str] = None) -> FactCheckResult:
+        urls = extract_urls(email_text)
+        brands_found, claim_hits = self.extract_entities_and_claims(email_text)
+        
+        obf_score, url_evs, url_comps = self.check_urls(urls)
+        brand_score, brand_evs, sender_domain = self.check_brand_impersonation(brands_found, urls, sender_email)
+        claim_score, claim_evs = self.claim_risk_score(claim_hits)
+        
+        components = {"brand_mismatch": brand_score,
+                        "tld_risk": url_comps["tld_risk"],
+                        "url_obfuscation": url_comps["url_obfuscation"],
+                        "claim_risk": claim_score}
+        
+        fact_risk = (0.35*components["brand_mismatch"] +
+                        0.25*components["tld_risk"] +
+                        0.20*components["url_obfuscation"] +
+                        0.20*components["claim_risk"])
+        
+        msgs = []
+        if brand_score > 0:
+            msgs.append(f"This email mentiones a brand ({', '.join(brands_found)}) but links to suspicious domains.")
+        if components["tld_risk"] > 0:
+            msgs.append("This email contains links with risky top-level domains (TLDs).")
+        if components["url_obfuscation"] > 0:
+            msgs.append("This email contains obfuscated URLs that may be used to mislead users.")
+        if claim_score > 0:
+            msgs.append("This email contains potentially suspicious phrases. (urgency, threats, etc.)")
+            
+            
+        evidence = url_evs + brand_evs + claim_evs
+        
+        return FactCheckResult(fact_risk = min(1.0, fact_risk),
+                                components = components,
+                                evidence = evidence,
+                                message = msgs)
+
 # ---------- Runner ----------
 
 if __name__ == "__main__":
-    # Testing utilities (general functionality, removing duplicates and preserving order)
-    text = "Check out https://example.com/path?query=1 and http://sub.domain.co.uk! Also visit https://example.com/path?query=1."
-    urls = extract_urls(text)
-    print("Extracted URLs:", urls)
-    for url in urls:
-        domain = domain_from_url(url)
-        tld = tld_extract(domain)
-        subdomain_count = count_subdomains(domain)
-        ip_check = is_ip_literal(domain)
-        hex_check = has_hex_encoding(url)
-        at_check = has_at_symbol(url)
         
-        print(f"URL: {url}")
-        print(f"  Domain: {domain}")
-        print(f"  TLD: {tld}")
-        print(f"  Subdomain Count: {subdomain_count}")
-        print(f"  Is IP Literal: {ip_check}")
-        print(f"  Has Hex Encoding: {hex_check}")
-        print(f"  Has '@' Symbol: {at_check}")
-        
-
-    # Testing loaders
-    tlds = load_tld_risks()
-    brands = load_brands()
-    phrases = load_phrases()
-    
-    print(f"Loaded {len(tlds)} TLD risks")
-    print(f"Loaded {len(brands)} brands")
-    print(f"Loaded {len(phrases)} phrase categories")
-    
-    print("Work in progress")
-    
     # Main checker test
     email_text = """
     Dear user, your PayPal account is locked. Verify your account within 24 hours:
     https://xn--paypa1-secure-login.example.tk/login
     """
     fc = FactChecker()
+    res = fc.check(email_text, sender_email="security@paypal-alerts.com")
+    
+    print("Input Email Text: ")
+    print(email_text)
+    print("Sender email:")
+    print("  security@paypal-alerts.com\n")
+
+    print("Fact Check Result:")
+    print(f"  Risk Level: {res.fact_risk}\n")
+    print(f"  Components: {res.components}\n")
+    print(f"  Evidence: {res.evidence}\n")
+    print(f"  Message: {res.message}\n")
