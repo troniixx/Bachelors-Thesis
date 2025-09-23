@@ -87,9 +87,11 @@ def load_spam_assassin(df: pd.DataFrame) -> pd.DataFrame:
     if "text" not in df.columns or "target" not in df.columns:
         raise ValueError("SpamAssassin dataset must have 'text' and 'target' columns")
     
+    sender = df["sender"].map(safe_string) if "sender" in df.columns else pd.Series([""] * len(df), index=df.index)
+    
     out = pd.DataFrame({
         "text": df["text"].astype(str),
-        "sender": "",
+        "sender": sender.astype(str),
         "label": df["target"].apply(normalize_label).astype(int)
     })
 
