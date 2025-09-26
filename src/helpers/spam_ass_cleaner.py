@@ -10,6 +10,9 @@ import re
 import pandas as pd
 import argparse
 
+# NOTE: Docstrings were refined and reworded using ChatGPT for better clarity and consistency.
+# NOTE: ChatGPT was also used to help optimize some functions for clarity and performance.
+
 # Regex for email addresses
 EMAIL_REGEX = re.compile(r'[\w\.-]+@[\w\.-]+')
 
