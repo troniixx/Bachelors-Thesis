@@ -6,6 +6,9 @@ from pathlib import Path
 import pandas as pd
 from typing import List, Optional, Tuple
 
+# NOTE: Docstrings were refined and reworded using ChatGPT for better clarity and consistency.
+# NOTE: ChatGPT was also used to help optimize some functions for clarity and performance.
+
 SPAM_STR = {"spam", "phish", "phishing", "malicious", "junk", "bad", "scam", "unsolicited"}
 HAM_STR = {"ham", "legit", "legitimate", "good", "normal", "not spam"}
 

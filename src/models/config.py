@@ -1,6 +1,9 @@
 # Constants (paths, seeds, columns)
 from pathlib import Path
 
+# NOTE: Docstrings were refined and reworded using ChatGPT for better clarity and consistency.
+# NOTE: ChatGPT was also used to help optimize some functions for clarity and performance.
+
 # Paths
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 DATA_DIR = PROJECT_ROOT / "data"

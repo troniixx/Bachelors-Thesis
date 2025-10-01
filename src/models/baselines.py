@@ -4,6 +4,9 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import LinearSVC
 
+# NOTE: Docstrings were refined and reworded using ChatGPT for better clarity and consistency.
+# NOTE: ChatGPT was also used to help optimize some functions for clarity and performance.
+
 def get_model(name: str):
     name = name.lower()
     

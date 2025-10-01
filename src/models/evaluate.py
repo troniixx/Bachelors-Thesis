@@ -8,6 +8,9 @@ from sklearn.metrics import (
     confusion_matrix, classification_report
 )
 
+# NOTE: Docstrings were refined and reworded using ChatGPT for better clarity and consistency.
+# NOTE: ChatGPT was also used to help optimize some functions for clarity and performance.
+
 def compute_matrix(y_true, y_proba_or_decision, y_pred, labels=(0,1)):
     # y_proba_or_decision: probabilities or decision function scores in the range [0, 1]
     # y_pred: binary predictions (0 or 1)

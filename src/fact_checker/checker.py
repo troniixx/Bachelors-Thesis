@@ -6,12 +6,13 @@ import idna
 import tldextract
 
 # NOTE: Docstrings were refined and reworded using ChatGPT for better clarity and consistency.
+# NOTE: ChatGPT was also used to help optimize some functions for clarity and performance.
 
 # ---------- Utilities ----------
 
 # NOTE: This regex is intentionally simple and fast. It will catch most HTTP(S) URLs
 # but is not a fully RFC-3986 compliant parser (e.g., it may miss edge cases or
-# accept some malformed inputs). Prefer using urllib.parse for deeper parsing.
+# accept some malformed inputs).
 URL_REGEX = re.compile(
     r"https?://(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b"
     r"(?:[-a-zA-Z0-9()@:%_\+.~#?&//=]*)"
@@ -40,8 +41,8 @@ def extract_urls(text: str) -> List[str]:
 
     out: List[str] = []
     for u in urls:
-        # Regex already matches http/https, but keep this guard in case you later
-        # change URL_REGEX or feed pre-parsed strings.
+        # Regex already matches http/https, but keep this guard in case when
+        # changing URL_REGEX or feeding pre-parsed strings.
         if not u.lower().startswith(("http://", "https://")):
             u = "http://" + u
 
@@ -56,7 +57,7 @@ def extract_urls(text: str) -> List[str]:
 def tld_extract(domain: str) -> str:
     """Return the registered domain (eTLD+1) component of a host.
 
-    Uses ``tldextract`` to robustly split a host into subdomain, domain, and suffix.
+    Uses tldextract to robustly split a host into subdomain, domain, and suffix.
     If the input is not recognized as a registered domain (e.g., localhost, IP),
     the original lowercased input is returned.
 
