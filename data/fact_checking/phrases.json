@@ -1,0 +1,23 @@
+{
+    "urgent": ["urgent", "immediately", "final notice", "within 24 hours"],
+    "credentials": ["verify your account", "password reset", "confirm your identity", "login to keep using"],
+    "payment": ["gift card", "wire transfer", "bank details", "invoice overdue", "pay now"],
+    "privacy": ["privacy policy", "terms of service", "cookie policy", "data protection", "gdpr compliance"],
+    "refund": ["refund", "refund request", "refund policy", "refund request", "refund process"],
+    "delivery": ["delivery", "shipping", "tracking", "delivery status", "delivery time"],
+    "discount": ["discount", "promo code", "promotional offer", "discount code", "discount offer"],
+    "confirmation": ["confirmation", "confirm your order", "confirm your payment", "confirm your delivery", "confirm your receipt"],
+    "account": ["account", "login", "register", "create account", "reset password"],
+    "billing": ["billing", "invoice", "payment", "payment method", "payment status"],
+    "support": ["support", "help", "contact us", "customer service", "support request"],
+    "subscription": ["subscription", "subscribe", "unsubscribe", "subscription plan", "subscription status"],
+    "security": ["security", "secure", "security alert", "security update", "security breach"],
+    "promotion": ["promotion", "special offer", "limited time offer", "exclusive deal", "promotion code"],
+    "survey": ["survey", "feedback", "customer satisfaction", "survey request", "survey participation"],
+    "reminder": ["reminder", "don't forget", "last chance", "final reminder", "reminder notice"],
+    "warning": ["warning", "alert", "caution", "important notice", "security warning"],
+    "legal": ["legal", "terms and conditions", "legal notice", "compliance", "legal update"],
+    "event": ["event", "webinar", "workshop", "conference", "event invitation"],
+    "news": ["news", "announcement", "update", "press release", "news bulletin"]
+
+}
