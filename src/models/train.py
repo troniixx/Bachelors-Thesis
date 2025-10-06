@@ -26,13 +26,19 @@ def parse_args():
 def main():
     args = parse_args()
     
+    # after parse_args(); replace your current path loop with this
     paths = []
     for p in args.datasets:
         pth = Path(p)
         if not pth.is_absolute():
             pth = (PROJECT_ROOT / pth).resolve()
+        if not pth.exists():
+            raise FileNotFoundError(f"[train] Dataset not found: {pth}")
+        if not pth.is_file():
+            raise ValueError(f"[train] Expected a FILE for --datasets, got directory: {pth}")
         paths.append(pth)
     print("[train] Using datasets:", [str(p) for p in paths])
+
     
     df = load_many(paths)
     print(f"[train] Loaded {len(df)} rows")
@@ -67,10 +73,20 @@ def main():
         m["fold"] = fold
         fold_metrics.append(m)
 
-    # Aggregate
-    agg = {k: np.nanmean([fm[k] for fm in fold_metrics if fm.get(k) is not None])
-            for k in fold_metrics[0].keys() if k != "fold"}
-    print("Average metrics:", agg)
+    # Aggregate only numeric metrics
+    NUMERIC_KEYS = ["accuracy", "precision", "recall", "f1", "roc_auc", "pr_auc"]
+    agg = {}
+    for k in NUMERIC_KEYS:
+        vals = []
+        for fm in fold_metrics:
+            v = fm.get(k, None)
+            if v is None:
+                continue
+            if isinstance(v, (int, float, np.floating)):
+                vals.append(float(v))
+        agg[k] = float(np.nanmean(vals)) if vals else None
+
+    print("[train] Average metrics:", agg)
 
     # Save
     timestamp = time.strftime("%Y%m%d-%H%M%S")

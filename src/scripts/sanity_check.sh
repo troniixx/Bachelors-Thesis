@@ -18,6 +18,13 @@ DATA_DIR="data"
 WANTED_DIR="models/tmp_sanity"   # standard output dir name
 SAMPLE_DATA="$DATA_DIR/spam_assassin_cleaned.csv"
 
+if [ -z "${SAMPLE_DATA:-}" ] || [ ! -f "$SAMPLE_DATA" ]; then
+    echo "❌ SAMPLE_DATA missing or not a file: '$SAMPLE_DATA'"
+    echo "   Expected something like: data/spam_assassin_cleaned.csv"
+    exit 1
+fi
+
+
 echo "DATA_DIR:    $DATA_DIR"
 echo "WANTED_DIR:  $WANTED_DIR"
 echo "SAMPLE_DATA: $SAMPLE_DATA"

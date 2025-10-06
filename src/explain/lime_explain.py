@@ -4,7 +4,7 @@ import numpy as np
 from lime.lime_text import LimeTextExplainer
 from sklearn.pipeline import Pipeline
 
-def predict_proba_safe(pipeline: Pipeline);
+def predict_proba_safe(pipeline: Pipeline):
     """
     Returns a function f(texts) -> probas that works with LIME.
     Falls back to decision_function or predict if predict_proba is not available.
