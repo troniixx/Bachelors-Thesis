@@ -19,7 +19,7 @@ import pandas as pd
 from joblib import load
 
 from .lime_explain import explain_with_lime, save_lime_html
-from .shap_explain import shap_explanation_global, shap_explain_local
+from .shap_explain import shap_explain_global, shap_explain_local
 
 def load_pipeline(model_dir_or_path: str):
     p = Path(model_dir_or_path)
@@ -47,13 +47,14 @@ def parse_args():
     ap.add_argument("--sample_csv", default=None, help="CSV file with sample data for SHAP global explanation.")
     ap.add_argument("--sample_size", type=int, default=200, help="Number of rows to sample from CSV for SHAP.")
     ap.add_argument("--save_global_shap", action="store_true", help="Whether to save the SHAP global summary plot.")
+    ap.add_argument("--save_local_shap", action="store_true", help="Also save local SHAP for first sampled row") 
     
     return ap.parse_args()
 
 def main():
     args = parse_args()
     pipe = load_pipeline(args.model_dir)
-    out_dir = ensure_outdir(args.out_dir or args_model_dir)
+    out_dir = ensure_outdir(args.out_dir or args.model_dir)
     
     # LIME
     if args.text:

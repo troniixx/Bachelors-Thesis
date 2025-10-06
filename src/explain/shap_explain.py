@@ -33,7 +33,7 @@ def transform_X(pipeline: Pipeline, X_df):
     
     return X_dense, names
 
-def shap_explanation_global(
+def shap_explain_global(
     pipeline: Pipeline,
     X_df_sample,
     max_display: int = 20,
@@ -43,7 +43,7 @@ def shap_explanation_global(
     Compute and (optionally) save a SHAP summary plot for a fitted pipeline.
     Works best for linear or tree models. For others, uses the generic Explainer.
     """
-    clf = pipeline.named_steps.get["clf"]
+    clf = pipeline.named_steps.get("clf")
     X_trans, names = transform_X(pipeline, X_df_sample)
     explainer = None
     
@@ -59,7 +59,7 @@ def shap_explanation_global(
     shap_values = explainer(X_trans)
     
     plt.figure()
-    shap.summary_plot(shap_values, X_trans, feature_names=names, max_display=max_display)
+    shap.summary_plot(shap_values, X_trans, feature_names=names, max_display=max_display, show=False)
     if save_path:
         plt.tight_layout()
         plt.savefig(save_path, dpi=160)

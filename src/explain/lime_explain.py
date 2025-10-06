@@ -72,9 +72,7 @@ def save_lime_html(exp, path: str, text: Optional[str] = None):
     """
     Save LIME explanation to an HTML file.
     """
-    html = exp.as_html(text=text) if text is None else exp.as_html(present_data=True)
-    
+    html = exp.as_html()
     with open(path, "w", encoding="utf-8") as f:
         f.write(html)
-        
     return path

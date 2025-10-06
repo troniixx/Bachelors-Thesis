@@ -66,6 +66,7 @@ python3 -m src.explain.explain \
     --text "$SAMPLE_TEXT" \
     --sample_csv "$SAMPLE_DATA" \
     --sample_size 100 \
+    --save_global_shap \
     --save_local_shap
 echo "Explanations OK."
 echo
