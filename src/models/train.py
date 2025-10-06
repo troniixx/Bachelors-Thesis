@@ -4,9 +4,9 @@ import time
 from pathlib import Path
 import joblib
 import numpy as np
-from skelearn.pipeline import Pipeline
+from sklearn.pipeline import Pipeline
 from sklearn.model_selection import StratifiedKFold
-from .config import DATA_DIR, MODELS_DIR, RANDOM_STATE, N_FOLDS
+from .config import DATA_DIR, MODELS_DIR, RANDOM_STATE, N_FOLDS, PROJECT_ROOT
 from .datasets import load_many
 from .vectorize import build_feature_space
 from .baselines import get_model, AVAILABLE
@@ -25,8 +25,18 @@ def parse_args():
 
 def main():
     args = parse_args()
-    paths = [DATA_DIR / p if not Path(p).is_absolute() else Path(p) for p in args.datasets]
+    
+    paths = []
+    for p in args.datasets:
+        pth = Path(p)
+        if not pth.is_absolute():
+            pth = (PROJECT_ROOT / pth).resolve()
+        paths.append(pth)
+    print("[train] Using datasets:", [str(p) for p in paths])
+    
     df = load_many(paths)
+    print(f"[train] Loaded {len(df)} rows")
+    
     X = df[["text", "sender"]]
     y = df["label"].values
 
@@ -66,10 +76,14 @@ def main():
     timestamp = time.strftime("%Y%m%d-%H%M%S")
     out_dir = MODELS_DIR / (args.out if args.out else f"{args.model}_{timestamp}")
     out_dir.mkdir(parents=True, exist_ok=True)
-    model_path = out_dir / "model.joblib"
+
+    model_path = out_dir / "pipeline.joblib"
     joblib.dump(pipe, model_path)
     print(f"Saved model to {model_path}")
 
-    metrics_path = out_dir / "metrics.json"
+    metrics_path = out_dir / "metrics.json"   # (name can stay as-is)
     save_json({"folds": fold_metrics, "aggregate": agg}, metrics_path)
     print(f"Saved metrics to {metrics_path}")
+    
+if __name__ == "__main__":
+    main()

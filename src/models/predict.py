@@ -12,7 +12,12 @@ def parse_args():
 
 def main():
     args = parse_args()
-    pipe = joblib.load(Path(args.model_dir) / "pipeline.joblib")
+    p = Path(args.model_dir)
+    path = p / "pipeline.joblib"
+    if not path.exists():
+        path = p / "model.joblib"
+
+    pipe = joblib.load(path)
     df = pd.read_csv(args.input_csv)
     
     if "text" not in df.columns:
