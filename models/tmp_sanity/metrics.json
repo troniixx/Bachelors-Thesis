@@ -1,0 +1,112 @@
+{
+  "folds": [
+    {
+      "accuracy": 0.9431034482758621,
+      "precision": 0.9644970414201184,
+      "recall": 0.8578947368421053,
+      "f1": 0.9080779944289693,
+      "roc_auc": 0.9754622132253711,
+      "pr_auc": 0.9638343594222727,
+      "confusion_matrix": [
+        [
+          768,
+          12
+        ],
+        [
+          54,
+          326
+        ]
+      ],
+      "classification_report": "              precision    recall  f1-score   support\n\n           0      0.934     0.985     0.959       780\n           1      0.964     0.858     0.908       380\n\n    accuracy                          0.943      1160\n   macro avg      0.949     0.921     0.933      1160\nweighted avg      0.944     0.943     0.942      1160\n",
+      "fold": 1
+    },
+    {
+      "accuracy": 0.9482312338222606,
+      "precision": 0.9705014749262537,
+      "recall": 0.8680738786279684,
+      "f1": 0.9164345403899722,
+      "roc_auc": 0.9768791015492861,
+      "pr_auc": 0.9675407377976192,
+      "confusion_matrix": [
+        [
+          770,
+          10
+        ],
+        [
+          50,
+          329
+        ]
+      ],
+      "classification_report": "              precision    recall  f1-score   support\n\n           0      0.939     0.987     0.963       780\n           1      0.971     0.868     0.916       379\n\n    accuracy                          0.948      1159\n   macro avg      0.955     0.928     0.939      1159\nweighted avg      0.949     0.948     0.947      1159\n",
+      "fold": 2
+    },
+    {
+      "accuracy": 0.9292493528904228,
+      "precision": 0.9569230769230769,
+      "recall": 0.820580474934037,
+      "f1": 0.8835227272727273,
+      "roc_auc": 0.9721771192747447,
+      "pr_auc": 0.960290312094797,
+      "confusion_matrix": [
+        [
+          766,
+          14
+        ],
+        [
+          68,
+          311
+        ]
+      ],
+      "classification_report": "              precision    recall  f1-score   support\n\n           0      0.918     0.982     0.949       780\n           1      0.957     0.821     0.884       379\n\n    accuracy                          0.929      1159\n   macro avg      0.938     0.901     0.916      1159\nweighted avg      0.931     0.929     0.928      1159\n",
+      "fold": 3
+    },
+    {
+      "accuracy": 0.9447799827437446,
+      "precision": 0.9673590504451038,
+      "recall": 0.8601583113456465,
+      "f1": 0.9106145251396648,
+      "roc_auc": 0.9783607333739259,
+      "pr_auc": 0.9697235427739356,
+      "confusion_matrix": [
+        [
+          769,
+          11
+        ],
+        [
+          53,
+          326
+        ]
+      ],
+      "classification_report": "              precision    recall  f1-score   support\n\n           0      0.936     0.986     0.960       780\n           1      0.967     0.860     0.911       379\n\n    accuracy                          0.945      1159\n   macro avg      0.951     0.923     0.935      1159\nweighted avg      0.946     0.945     0.944      1159\n",
+      "fold": 4
+    },
+    {
+      "accuracy": 0.9508196721311475,
+      "precision": 0.9653179190751445,
+      "recall": 0.8812664907651715,
+      "f1": 0.9213793103448276,
+      "roc_auc": 0.9826466409579866,
+      "pr_auc": 0.9754840536386771,
+      "confusion_matrix": [
+        [
+          768,
+          12
+        ],
+        [
+          45,
+          334
+        ]
+      ],
+      "classification_report": "              precision    recall  f1-score   support\n\n           0      0.945     0.985     0.964       780\n           1      0.965     0.881     0.921       379\n\n    accuracy                          0.951      1159\n   macro avg      0.955     0.933     0.943      1159\nweighted avg      0.951     0.951     0.950      1159\n",
+      "fold": 5
+    }
+  ],
+  "aggregate": {
+    "accuracy": 0.9432367379726875,
+    "precision": 0.9649197125579395,
+    "recall": 0.8575947785029857,
+    "f1": 0.9080058195152322,
+    "roc_auc": 0.9771051616762628,
+    "pr_auc": 0.9673746011454603
+  }
+}

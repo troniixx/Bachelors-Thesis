@@ -1,3 +1,5 @@
 *.csv
 *.tar.gz
 __pycache__/
+.code-workspace
+src/models/__pycache__/
