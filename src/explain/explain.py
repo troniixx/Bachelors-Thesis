@@ -1,3 +1,7 @@
+#!/usr/bin/env python3
+# Copyright (c) 2025 Mert Erol, University of Zurich
+# Licensed under the Academic and Educational Use License (AEUL) – see LICENSE file for details.
+
 """
 Thin CLI wrapper that uses lime_explainer.py and shap_explainer.py
 to generate local (LIME) and global/local (SHAP) explanations

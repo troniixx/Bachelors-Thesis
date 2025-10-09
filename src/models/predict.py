@@ -1,3 +1,7 @@
+#!/usr/bin/env python3
+# Copyright (c) 2025 Mert Erol, University of Zurich
+# Licensed under the Academic and Educational Use License (AEUL) – see LICENSE file for details.
+
 # CLI to load a saved model and predict on new data
 import argparse, joblib, pandas as pd, json
 from pathlib import Path

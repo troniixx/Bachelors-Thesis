@@ -1,3 +1,7 @@
+#!/usr/bin/env python3
+# Copyright (c) 2025 Mert Erol, University of Zurich
+# Licensed under the Academic and Educational Use License (AEUL) – see LICENSE file for details.
+
 # loading & merging datasets (Enron, SpamAssassin, etc.)
 # goal is to have one huge dataset with columns: text (string), sender (string, may be empty), label (0 = ham or 1 = spam/phish)
 

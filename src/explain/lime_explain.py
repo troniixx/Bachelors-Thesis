@@ -1,3 +1,7 @@
+#!/usr/bin/env python3
+# Copyright (c) 2025 Mert Erol, University of Zurich
+# Licensed under the Academic and Educational Use License (AEUL) – see LICENSE file for details.
+
 # Provides LIME-based local explanations for text classifiers (works with sklearn Pipelines)
 from typing import List, Optional
 import numpy as np

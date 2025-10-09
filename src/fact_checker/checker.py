@@ -1,3 +1,7 @@
+#!/usr/bin/env python3
+# Copyright (c) 2025 Mert Erol, University of Zurich
+# Licensed under the Academic and Educational Use License (AEUL) – see LICENSE file for details.
+
 import re, json, math
 from dataclasses import dataclass
 from typing import List, Dict, Any, Tuple, Optional

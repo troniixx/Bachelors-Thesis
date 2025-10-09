@@ -1,3 +1,7 @@
+#!/usr/bin/env bash
+# Copyright (c) 2025 Mert Erol, University of Zurich
+# Licensed under the Academic and Educational Use License (AEUL) – see LICENSE file for details.
+
 cd "/Users/merterol/Desktop/UZH/CompLing:CompSci/CL/Sem 5/Bachelors Thesis/VSCode/Bachelors-Thesis"
 /usr/local/bin/python3 - <<'PY'
 from pathlib import Path
