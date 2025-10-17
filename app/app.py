@@ -50,11 +50,11 @@ def load_pipeline(model_dir: str):
     """
     Load a trained sklearn pipeline from the specified directory.
     """
-    model_dir = Path(model_dir)
-    p = model_dir / MODEL_FILE_NAME
+    model_dir = Path(model_dir)  # type: ignore
+    p = model_dir / MODEL_FILE_NAME # type: ignore
     
     if not p.exists():
-        alt = model_dir / "model.joblib"
+        alt = model_dir / "model.joblib" # type: ignore
         if alt.exists():
             p = alt
         else:
