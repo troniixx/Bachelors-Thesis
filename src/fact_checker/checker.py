@@ -379,19 +379,45 @@ class FactChecker:
         return mismatch, evidence, sender_domain_etld1
     
     def claim_risk_score(self, claim_hits: Dict[str, List[str]]) -> Tuple[float, List[Evidence]]:
-        hits = sum(len(v) for v in claim_hits.values())
-        score = 0.0
-        
-        if hits >= 3: score = 1.0
-        elif hits == 2: score = 0.66
-        elif hits == 1: score = 0.33
-        
-        ev = []
-        
-        if hits:
-            ev.append(Evidence("claim_risk", claim_hits))
+        """
+        Weighted claim-risk:
+          - High-severity categories (credential/payment/threat) contribute more.
+          - If ONLY low-severity categories matched, apply a small dampener.
+        """
+        # Adjust these to match your phrases.json keys (unknown → medium by default)
+        CATEGORY_WEIGHTS = {
+            "credential_access": 1.0,       # "verify account", "reset password", "confirm identity"
+            "payment_urgency": 0.8,         # "wire immediately", "gift card", "bitcoin wallet"
+            "threat_or_consequence": 0.7,   # "account will be deleted", "final notice"
+            "neutral_finance_low": 0.25,    # benign finance phrases: "bank account", etc.
+            "misc_generic": 0.10            # very weak, generic cues: "click here"
+        }
 
-        return score, ev
+        weighted = 0.0
+        total_hits = 0
+        any_high = False
+
+        for cat, phrases in claim_hits.items():
+            hits = len(phrases)
+            total_hits += hits
+            w = CATEGORY_WEIGHTS.get(cat, 0.4)  # default medium if unknown category
+            weighted += hits * w
+            if w >= 0.7:
+                any_high = True
+
+        # map weighted sum to [0,1] (≈ 3 strong hits saturate)
+        score = min(1.0, weighted / 3.0)
+
+        # dampener if only low-severity categories were hit
+        if total_hits > 0 and not any_high:
+            score = max(0.0, score - 0.15)
+
+        evidence: List[Evidence] = []
+        if total_hits > 0:
+            evidence.append(Evidence("claim_risk", claim_hits))
+
+        return score, evidence
+
     def check(self, email_text: str, sender_email: Optional[str] = None) -> FactCheckResult:
         urls = extract_urls(email_text)
         brands_found, claim_hits = self.extract_entities_and_claims(email_text)
@@ -399,6 +425,12 @@ class FactChecker:
         obf_score, url_evs, url_comps = self.check_urls(urls)
         brand_score, brand_evs, sender_domain = self.check_brand_impersonation(brands_found, urls, sender_email)
         claim_score, claim_evs = self.claim_risk_score(claim_hits)
+        
+        def _sev_label(x: float) -> str:
+            if x >= 0.8: return "critical"
+            if x >= 0.5: return "high"
+            if x >= 0.2: return "medium"
+            return "low"
         
         components = {"brand_mismatch": brand_score,
                         "tld_risk": url_comps["tld_risk"],
@@ -418,11 +450,10 @@ class FactChecker:
         if components["url_obfuscation"] > 0:
             msgs.append("This email contains obfuscated URLs that may be used to mislead users.")
         if claim_score > 0:
-            msgs.append("This email contains potentially suspicious phrases. (urgency, threats, etc.)")
-            
-            
+            msgs.append(f"This email contains potentially suspicious phrases (claim risk: {_sev_label(claim_score)}).")
+
         evidence = url_evs + brand_evs + claim_evs
-        
+
         return FactCheckResult(fact_risk = min(1.0, fact_risk),
                                 components = components,
                                 evidence = evidence,

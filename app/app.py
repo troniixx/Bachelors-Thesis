@@ -9,11 +9,12 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 from joblib import load
+from src.fact_checker.checker import extract_urls
 
 from lime.lime_text import LimeTextExplainer
 from sklearn.utils.validation import check_is_fitted
 
-from typing import Any
+from typing import Any, Optional
 
 try:
     from src.fact_checker.checker import FactChecker, FactCheckResult, Evidence
@@ -153,7 +154,7 @@ def get_fact_checker():
     if not FACT_CHECKER_AVAILABLE:
         return None
     try:
-        return FactChecker()
+        return FactChecker() # type: ignore
     except Exception:
         return None
     
@@ -213,6 +214,8 @@ def render_factcheck_panel(res):
 st.sidebar.title("Settings")
 model_dir = st.sidebar.text_input("Model Directory", value=MODEL_DIR_DEFAULT)
 num_features = st.sidebar.slider("LIME: number of features", min_value=5, max_value=20, value=10, step=1)
+threshold = st.sidebar.slider("Decision threshold (phishing)", min_value=0.50, max_value=0.90, value=0.65, step=0.01)
+st.sidebar.caption(f"Emails are flagged as phishing if P(Phishing) >= {threshold:.2f}")
 st.sidebar.markdown("---")
 st.sidebar.caption("Leave sender empty if unknown.")
 
@@ -249,13 +252,8 @@ if submitted:
     df_one = pd.DataFrame([{"text" : email_text, "sender": sender or ""}])
     proba = predict_proba_safe(pipe, df_one)
     p_legit, p_phish = float(proba[0,0]), float(proba[0,1])
-    pred_label_idx = int(np.argmax(proba, axis=1)[0])
-    pred_label = CLASS_NAMES[pred_label_idx]
-    conf = p_phish if pred_label_idx == 1 else p_legit
     
-    st.subheader("Prediction Result")
-    st.markdown(f"**Predicted Class:** `{pred_label}`")
-    st.markdown(f"**Confidence:** `{conf*100:.2f}%`")
+    fc_res: Optional[Any] = None
     
     # --- Fact-Checker panel ---
     if run_factcheck:
@@ -269,7 +267,47 @@ if submitted:
                 render_factcheck_panel(fc_res)
             except Exception as e:
                 st.warning(f"Fact-checking failed: {e}")
+                fc_res = None
 
+    # --- No-URL + low-claim dampener (−0.10) ---
+    adjust_notes = []
+    urls = extract_urls(email_text)
+    no_urls = (len(urls) == 0)
+
+    # Prefer fact-checker’s claim_risk if available; else fallback keyword heuristic
+    if run_factcheck and fc_res is not None:
+        low_claim = (fc_res.components.get("claim_risk", 0.0) < 0.34)
+    else:
+        # very light fallback: only treat as “high-claim” if strong credentials/payment cues appear
+        low_claim_keywords = [
+            "verify your account", "reset your password", "confirm your identity",
+            "log in to your account", "update your billing", "gift card",
+            "urgent wire", "bank transfer immediately", "bitcoin wallet"
+        ]
+        txt = email_text.lower()
+        low_claim = not any(k in txt for k in low_claim_keywords)
+
+    # Apply dampener only when there's no URL and claims are low-risk
+    final_p_phish = p_phish
+    if no_urls and low_claim:
+        final_p_phish = max(0.0, final_p_phish - 0.10)
+        adjust_notes.append("Applied no-URL/low-claim dampener (-0.10)")
+
+    # --- Decision with user threshold ---
+    pred_is_phish = (final_p_phish >= threshold)
+    pred_label = CLASS_NAMES[1] if pred_is_phish else CLASS_NAMES[0]
+    conf = final_p_phish if pred_is_phish else (1.0 - final_p_phish)
+
+    # --- Display ---
+    st.subheader("Prediction Result")
+    st.markdown(
+        f"**P(phishing):** raw `{p_phish:.3f}` → adjusted `{final_p_phish:.3f}`  "
+        f"(threshold `{threshold:.2f}`)"
+    )
+    st.markdown(f"**Predicted Class:** `{pred_label}`")
+    st.markdown(f"**Confidence:** `{conf*100:.2f}%`")
+    if adjust_notes:
+        st.caption("Adjustments: " + " • ".join(adjust_notes))
     
     with st.spinner("Generating LIME explanation..."):
         try:
@@ -304,14 +342,16 @@ if submitted:
             "sender": sender or "",
             "text": email_text,
             "pred_label": pred_label,
-            "p_phishing": round(p_phish, 6),
-            "p_legitimate": round(p_legit, 6),
+            "p_phishing_raw": round(p_phish, 6),
+            "p_phishing_adj": round(final_p_phish, 6),
+            "p_legitimate": round(1.0 - final_p_phish, 6),  # from adjusted prob
             "user_agrees": (agree == "Yes"),
             "user_label": user_label,
             "user_comment": user_comment,
             "model_dir": str(model_dir),
             "lime_num_features": num_features,
         }
+        
         try:
             save_feedback_row(row)
             st.success(f"Feedback saved to {FEEDBACK_PATH}")

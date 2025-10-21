@@ -15,6 +15,7 @@ from sklearn.svm import LinearSVC
 from sklearn.calibration import CalibratedClassifierCV
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.dummy import DummyClassifier
+from sklearn.calibration import CalibratedClassifierCV
 
 
 def get_model(name: str):

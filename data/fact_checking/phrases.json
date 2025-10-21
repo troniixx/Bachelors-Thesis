@@ -18,6 +18,10 @@
     "warning": ["warning", "alert", "caution", "important notice", "security warning"],
     "legal": ["legal", "terms and conditions", "legal notice", "compliance", "legal update"],
     "event": ["event", "webinar", "workshop", "conference", "event invitation"],
-    "news": ["news", "announcement", "update", "press release", "news bulletin"]
-
+    "news": ["news", "announcement", "update", "press release", "news bulletin"],
+    "neutral_finance_low": ["send you money", "reimburse", "pay you back", "transfer you the money"],
+    "credential_access": ["verify your account", "reset your password", "confirm identity"],
+    "payment_urgency": ["wire immediately", "gift card", "bitcoin wallet"],
+    "threat_or_consequence": ["final notice", "account will be deleted"],
+    "misc_generic": ["click here", "follow this link"]
 }
