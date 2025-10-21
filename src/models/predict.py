@@ -24,10 +24,15 @@ def main():
     pipe = joblib.load(path)
     df = pd.read_csv(args.input_csv)
     
+    # --- Robust sanitization ---
     if "text" not in df.columns:
         raise ValueError("Input CSV must contain a 'text' column.")
     if "sender" not in df.columns:
         df["sender"] = ""
+    
+    # Ensure *strings*, no NaNs or floats getting to encoders
+    df["text"] = df["text"].astype(str).fillna("")
+    df["sender"] = df["sender"].astype(str).fillna("")
     
     ypred = pipe.predict(df[["text", "sender"]])
     if hasattr(pipe.named_steps["clf"], "predict_proba"):

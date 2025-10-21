@@ -19,7 +19,7 @@ from .evaluate import compute_metrics, save_json
 def parse_args():
     ap = argparse.ArgumentParser(description="Train spam/phishing classifiers with fact-check features.")
     ap.add_argument("--datasets", nargs="+", required=True, help="Paths to CSV files under data/")
-    ap.add_argument("--model", default="logreg", choices=AVAILABLE)
+    ap.add_argument("--model", default="logistic_regression", choices=AVAILABLE)
     ap.add_argument("--out", default=None, help="Output dir under models/. Default auto timestamp.")
     # Feature toggles
     ap.add_argument("--use_tfidf", action="store_true", help="Include TF-IDF features")
