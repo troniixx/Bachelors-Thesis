@@ -9,6 +9,17 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 from joblib import load
+
+# --- Ensure project root is on sys.path ---
+from pathlib import Path
+import sys
+
+THIS_FILE = Path(__file__).resolve()
+REPO_ROOT = THIS_FILE.parent.parent  # go one level up from app/ to repo root
+
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
 from src.fact_checker.checker import extract_urls
 
 from lime.lime_text import LimeTextExplainer

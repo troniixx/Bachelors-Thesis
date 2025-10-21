@@ -30,7 +30,6 @@ def parse_args():
 def main():
     args = parse_args()
     
-    # after parse_args(); replace your current path loop with this
     paths = []
     for p in args.datasets:
         pth = Path(p)
