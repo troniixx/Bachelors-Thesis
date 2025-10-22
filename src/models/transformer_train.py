@@ -50,13 +50,7 @@ def main():
         per_device_train_batch_size=16,
         per_device_eval_batch_size=32,
         num_train_epochs=args.epochs,
-        weight_decay=0.01,
-        evaluation_strategy='epoch',
-        save_strategy='epoch',
-        logging_steps=50,
-        load_best_model_at_end=True,
-        metric_for_best_model='f1',
-        report_to='none'
+        weight_decay=0.01
     )
 
     trainer = Trainer(
