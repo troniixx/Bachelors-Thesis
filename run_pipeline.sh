@@ -7,8 +7,9 @@ set -euo pipefail
 # Config
 ############################################
 
-# Toggle transformer fine tuning
-RUN_TRANSFORMER="${RUN_TRANSFORMER:-false}"
+# Toggle transformer fine tuning (set to "false" to skip)
+# Use default expansion so it's enabled by default unless overridden in the env.
+RUN_TRANSFORMER="${RUN_TRANSFORMER:-true}"
 
 # Datasets
 BASELINE_CSV="data/baseline_spam-ham.csv"
@@ -161,7 +162,7 @@ echo "[4/5] Enron predictions…"
 if [ -n "$ENRON_CSV" ]; then
     mkdir -p "$ART_DIR/preds"
 
-  # loop through every trained model dir under models/runs/<RUN_ID>/*
+  # loop through classic model dirs only (tfidf_* and sbertfc_*)
   while IFS= read -r -d '' dir; do
     NAME="$(basename "$dir")"
     OUT_CSV="$ART_DIR/preds/enron_${NAME}.csv"
@@ -171,10 +172,19 @@ if [ -n "$ENRON_CSV" ]; then
       --model_dir "$dir" \
       --input_csv "$ENRON_CSV" \
       --out_csv "$OUT_CSV" | tee "$LOG" >/dev/null
-  done < <(find "models/runs/$RUN_ID" -maxdepth 1 -mindepth 1 -type d -print0)
+  done < <(find "models/runs/$RUN_ID" -maxdepth 1 -mindepth 1 -type d \( -name 'tfidf_*' -o -name 'sbertfc_*' \) -print0)
 
+  # explicit transformer inference if available
   if [ -n "$TRANS_DIR" ]; then
-    echo "NOTE: transformer inference on Enron not wired into this script yet."
+    TNAME="$(basename "$TRANS_DIR")"
+    OUT_CSV="$ART_DIR/preds/enron_${TNAME}.csv"
+    LOG="$LOG_DIR/predict_enron_${TNAME}.log"
+    echo " -> $TNAME (transformer)"
+    python3 -m src.models.transformer_predict \
+      --model_dir "$TRANS_DIR" \
+      --input_csv "$ENRON_CSV" \
+      --out_csv "$OUT_CSV" \
+      --max_len "$TRANSFORMER_MAXLEN" | tee "$LOG" >/dev/null
   fi
 else
   echo "Skipped (no Enron holdout)."
@@ -209,6 +219,14 @@ if [ -n "$SBERT_DIR" ]; then
     --sample_csv "${DATASETS[0]}" \
     --sample_size 150 \
     --save_global_shap | tee "$LOG_DIR/explain_sbertfc.log" >/dev/null
+fi
+
+# transformer LIME (local) if available
+if [ -n "$TRANS_DIR" ]; then
+  python3 -m src.explain.explain_transformer \
+    --model_dir "$TRANS_DIR" \
+    --out_dir "$ART_DIR/explain/transformer" \
+    --text "$SAMPLE_TEXT" | tee "$LOG_DIR/explain_transformer.log" >/dev/null
 fi
 
 echo
