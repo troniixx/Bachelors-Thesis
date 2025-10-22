@@ -75,91 +75,149 @@ def zenodo_urls_to_inline(urls_cell) -> str:
 # ---- Specific dataset loaders ----
 
 def load_baseline(df: pd.DataFrame) -> pd.DataFrame:
-    """Load the baseline dataset from CSV file"""
-    
+    """Load the baseline dataset from CSV file (robust)."""
     if not {"label", "text"}.issubset(df.columns):
         raise ValueError("Baseline dataset must have 'label' and 'text' columns")
-    
+
+    # attempt to normalize; mark failures as None
+    def _try_norm(v):
+        try:
+            return normalize_label(v)
+        except Exception:
+            return None
+
+    labels = df["label"].apply(_try_norm)
+    bad = labels.isna().sum()
+    if bad > 0:
+        # optional: show a couple examples to help debugging
+        bad_examples = df.loc[labels.isna(), "label"].astype(str).head(5).tolist()
+        print(f"[load_baseline] Warning: dropping {bad} rows with unrecognized labels. "
+                f"Examples: {bad_examples}")
+
+    keep = labels.notna()
     out = pd.DataFrame({
-        "text": df["text"].astype(str),
+        "text": df.loc[keep, "text"].astype(str),
         "sender": "",
-        "label": df["label"].apply(normalize_label).astype(int)
+        "label": labels.loc[keep].astype(int)
     })
-    
-    return out
+    return out.reset_index(drop=True)
+
 
 def load_spam_assassin(df: pd.DataFrame) -> pd.DataFrame:
-    """Load the SpamAssassin dataset from CSV file"""
-    
+    """Load the SpamAssassin dataset from CSV file (robust)."""
     if "text" not in df.columns or "target" not in df.columns:
         raise ValueError("SpamAssassin dataset must have 'text' and 'target' columns")
-    
-    sender = df["sender"].map(safe_string) if "sender" in df.columns else pd.Series([""] * len(df), index=df.index)
-    
-    out = pd.DataFrame({
-        "text": df["text"].astype(str),
-        "sender": sender.astype(str),
-        "label": df["target"].apply(normalize_label).astype(int)
-    })
 
-    return out
+    sender = df["sender"].map(safe_string) if "sender" in df.columns else pd.Series([""] * len(df), index=df.index)
+
+    def _try_norm(v):
+        try:
+            return normalize_label(v)
+        except Exception:
+            return None
+
+    labels = df["target"].apply(_try_norm)
+    bad = labels.isna().sum()
+    if bad > 0:
+        bad_examples = df.loc[labels.isna(), "target"].astype(str).head(5).tolist()
+        print(f"[load_spam_assassin] Warning: dropping {bad} rows with bad targets. "
+                f"Examples: {bad_examples}")
+
+    keep = labels.notna()
+    out = pd.DataFrame({
+        "text": df.loc[keep, "text"].astype(str),
+        "sender": sender.loc[keep].astype(str),
+        "label": labels.loc[keep].astype(int)
+    })
+    return out.reset_index(drop=True)
+
 
 def load_zenodo(df: pd.DataFrame) -> pd.DataFrame:
-    """Load the Zenodo dataset from CSV file"""
-    
+    """Load the Zenodo dataset from CSV file (robust)."""
     required = {"subject", "body", "label"}
     missing = required - set(df.columns)
-    
     if missing:
         raise ValueError(f"Zenodo dataset is missing required columns: {missing}")
-    
+
     subject = df["subject"].map(safe_string)
     body = df["body"].map(safe_string)
-    
-    urls_inline = ""
+
     if "urls" in df.columns:
         urls_inline = df["urls"].map(zenodo_urls_to_inline)
-        text = subject.str.cat(body, sep = "\n\n").str.cat(urls_inline, sep = "\n\nURLS:\n")
+        text = subject.str.cat(body, sep="\n\n").str.cat(urls_inline, sep="\n\nURLS:\n")
     else:
-        text = subject.str.cat(body, sep = "\n\n")
-        
+        text = subject.str.cat(body, sep="\n\n")
+
     sender = df["sender"].map(safe_string) if "sender" in df.columns else pd.Series([""] * len(df), index=df.index)
-    
+
+    def _try_norm(v):
+        try:
+            return normalize_label(v)
+        except Exception:
+            return None
+
+    labels = df["label"].apply(_try_norm)
+    bad = labels.isna().sum()
+    if bad > 0:
+        bad_examples = df.loc[labels.isna(), "label"].astype(str).head(5).tolist()
+        print(f"[load_zenodo] Warning: dropping {bad} rows with bad labels. "
+                f"Examples: {bad_examples}")
+
+    keep = labels.notna()
     out = pd.DataFrame({
-        "text": text.astype(str),
-        "sender": sender.astype(str),
-        "label": df["label"].apply(normalize_label).astype(int)
+        "text": text.loc[keep].astype(str),
+        "sender": sender.loc[keep].astype(str),
+        "label": labels.loc[keep].astype(int)
     })
-    
-    return out
+    return out.reset_index(drop=True)
+
 
 # ---- Merging multiple datasets ----
 
 def load_csv(path: Path) -> pd.DataFrame:
-    """Load a CSV file into a DataFrame"""
-    
-    df = pd.read_csv(path)
+    """Load a CSV file into a DataFrame (robust to quoting/comma errors)."""
+    import csv
+
+    try:
+        df = pd.read_csv(
+            path,
+            engine="python",          # tolerant parser
+            sep=",",
+            quotechar='"',
+            escapechar="\\",
+            on_bad_lines="skip",      # skip malformed rows
+        )
+    except Exception as e:
+        raise RuntimeError(f"Failed to read {path}: {e}")
+
     cols = set(df.columns)
-    
+    print(f"[load_csv] Loaded {path} with {len(df)} rows and columns: {cols}")
+
+    # Identify and dispatch to the right loader
     if {"label", "text"}.issubset(cols) and "target" not in cols:
         return load_baseline(df)
     if "target" in cols and "text" in cols:
         return load_spam_assassin(df)
     if {"subject", "body"}.issubset(cols) or "urls" in cols or "sender" in cols:
         return load_zenodo(df)
-    
+
     raise ValueError(f"Unrecognized dataset format in {path}, columns: {cols}")
 
+
 def load_many(paths: List[Path]) -> pd.DataFrame:
-    """Load and merge multiple datasets from given CSV file paths"""
-    
     dfs = [load_csv(Path(p)) for p in paths]
     df = pd.concat(dfs, ignore_index=True)
-    
     df = df.dropna(subset=["text", "label"]).reset_index(drop=True)
-    
-    # strip werid whitespace
+
+    # normalize/clean
     df["text"] = df["text"].astype(str).str.replace(r"\s+", " ", regex=True).str.strip()
     df["sender"] = df["sender"].astype(str).fillna("")
     df["label"] = df["label"].astype(int)
+
+    # quick summary
+    n_total = len(df)
+    n_spam = int((df["label"] == 1).sum())
+    n_ham = n_total - n_spam
+    print(f"[load_many] merged rows: {n_total}  (ham={n_ham}, spam={n_spam})")
+
     return df

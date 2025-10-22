@@ -25,10 +25,12 @@ def build_feature_space(use_tfidf=False, use_sbert=True, use_factchecker=True):
             "tfidf",
             TfidfVectorizer(
                 max_features=50000,
-                min_df=2,
+                min_df=3,
                 ngram_range=(1, 2),
                 lowercase=True,
-                strip_accents="unicode"
+                strip_accents="unicode",
+                max_df=0.95,
+                sublinear_tf=True
             ),
             "text"
         ))

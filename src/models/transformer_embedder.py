@@ -13,8 +13,8 @@ class SBertEmbedder(BaseEstimator, TransformerMixin):
     def __init__(
         self,
         model_name: str = "sentence-transformers/all-MiniLM-L6-v2",
-        batch_size: int = 32,
-        device=None,
+        batch_size: int = 64,
+        device="mps",
     ):
         from sentence_transformers import SentenceTransformer
         self.model_name = model_name
