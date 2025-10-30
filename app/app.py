@@ -62,7 +62,7 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-MODEL_DIR_DEFAULT = "models/tmp_sanity" # TODO: change to production model dir
+MODEL_DIR_DEFAULT = "models/runs/20251022-124353/tfidf_bernoulli_nb" # TODO: change to production model dir
 MODEL_FILE_NAME = "pipeline.joblib" # TODO: change to production model name
 FEEDBACK_PATH = Path("feedback/feedback.csv")
 CLASS_NAMES = ["Benign", "Phishing"]
@@ -374,7 +374,7 @@ st.markdown("---")
 st.caption(
     "© 2025 Mert Erol, University of Zurich. "
     "This is a prototype application for demonstration purposes only. "
-    "Not intended for production use."
+    "Not intended for production use.\n"
     "Privacy notice: inputs and feedback are stored locally (feedback/feedback.csv). "
     "No external transmission occurs. Avoid pasting sensitive personal data."
 )
