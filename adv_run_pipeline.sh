@@ -249,7 +249,8 @@ if [ "$START_FROM" -le 5 ] && [ "$END_AT" -ge 5 ]; then
   mkdir -p "$ART_DIR/explain"
 
   # pick the first TF-IDF model dir
-  TFIDF_DIR="$(find "models/runs/$RUN_ID" -maxdepth 1 -type d -name 'tfidf_*' | head -n 1 || true)"
+  TFIDF_DIR="$(find "models/runs/$RUN_ID" -maxdepth 1 -type d -name 'tfidf_ridge_classifier*' | head -n 1 || true)"
+[ -z "$TFIDF_DIR" ] && TFIDF_DIR="$(find "models/runs/$RUN_ID" -maxdepth 1 -type d -name 'tfidf_logistic_regression*' | head -n 1 || true)"
   if [ -n "$TFIDF_DIR" ]; then
     python3 -m src.explain.explain \
       --model_dir "$TFIDF_DIR" \
@@ -261,7 +262,8 @@ if [ "$START_FROM" -le 5 ] && [ "$END_AT" -ge 5 ]; then
   fi
 
   # pick the first SBERT(+FC) model dir
-  SBERT_DIR="$(find "models/runs/$RUN_ID" -maxdepth 1 -type d -name 'sbertfc_*' | head -n 1 || true)"
+  SBERT_DIR="$(find "models/runs/$RUN_ID" -maxdepth 1 -type d -name 'sbertfc_logistic_regression*' | head -n 1 || true)"
+[ -z "$SBERT_DIR" ] && SBERT_DIR="$(find "models/runs/$RUN_ID" -maxdepth 1 -type d -name 'sbertfc_ridge_classifier*' | head -n 1 || true)"
   if [ -n "$SBERT_DIR" ]; then
     python3 -m src.explain.explain \
       --model_dir "$SBERT_DIR" \
@@ -274,8 +276,6 @@ if [ "$START_FROM" -le 5 ] && [ "$END_AT" -ge 5 ]; then
 
   echo
   echo "=== ✅ Pipeline finished ==="
-  # Aggregate all metrics into a single CSV
-  python3 scripts/aggregate_metrics.py --run_dir "$RUN_DIR" | tee "$LOG_DIR/aggregate.log" >/dev/null
 
   echo "Summary CSV: $RUN_DIR/artifacts/summary/metrics_summary.csv"
   echo "Artifacts:   $RUN_DIR"
