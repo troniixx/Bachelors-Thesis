@@ -14,6 +14,14 @@ from joblib import load
 from pathlib import Path
 import sys
 
+try:
+    import torch
+    from transformers import AutoTokenizer, AutoModelForSequenceClassification, TextClassificationPipeline
+    HF_AVAILABLE = True
+except Exception:
+    HF_AVAILABLE = False
+
+
 THIS_FILE = Path(__file__).resolve()
 REPO_ROOT = THIS_FILE.parent.parent  # go one level up from app/ to repo root
 
@@ -62,63 +70,175 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-MODEL_DIR_DEFAULT = "models/runs/20251022-124353/tfidf_bernoulli_nb" # TODO: change to production model dir
+MODEL_DIR_DEFAULT = "models/runs/20251022-124353/transformer_distilroberta-base" # TODO: change to production model dir
 MODEL_FILE_NAME = "pipeline.joblib" # TODO: change to production model name
 FEEDBACK_PATH = Path("feedback/feedback.csv")
 CLASS_NAMES = ["Benign", "Phishing"]
 
 # ---- Helper functions ----
+def is_hf_model_dir(p: Path) -> bool:
+    # A HF folder typically has config.json + tokenizer files
+    return (p / "config.json").exists() and ((p / "tokenizer.json").exists() or (p / "tokenizer_config.json").exists())
+
+def best_hf_checkpoint(root: Path) -> Path:
+    """
+    Choose a best checkpoint if available:
+    1) trainer_state.json -> 'best_model_checkpoint'
+    2) latest 'checkpoint-*' folder
+    3) fall back to root itself (root contains model.safetensors)
+    """
+    ts = root / "trainer_state.json"
+    if ts.exists():
+        try:
+            import json
+            data = json.load(open(ts, "r"))
+            best = data.get("best_model_checkpoint")
+            if best:
+                bp = Path(best)
+                return bp if bp.is_dir() else root
+        except Exception:
+            pass
+
+    ckpts = sorted([d for d in root.glob("checkpoint-*") if d.is_dir()],
+                    key=lambda d: int(d.name.split("-")[-1]))
+    return ckpts[-1] if ckpts else root
+
+class HFWrapper:
+    """
+    Minimal wrapper so the rest of the app can call predict_proba(df[['text','sender']]).
+    We ignore 'sender' for the transformer (unless you later add a 2-field model).
+    """
+    def __init__(self, pipeline: TextClassificationPipeline, id2label: dict[int,str]): # type: ignore
+        self.pipe = pipeline # type: ignore
+        self.id2label = id2label
+        # normalize positive label index
+        # assume binary with labels like {0: 'LABEL_0', 1: 'LABEL_1'} or {0:'ham',1:'spam'}
+        self.pos_idx = 1 if 1 in id2label else 0
+
+    def predict_proba(self, df_2col: pd.DataFrame) -> np.ndarray:
+        texts = df_2col["text"].astype(str).tolist()
+        # return dicts with 'score' for positive class; we’ll compute both probs
+        # Use return_all_scores=True to ensure both classes returned
+        outputs = self.pipe(texts, truncation=True, return_all_scores=True)
+        probs = []
+        for row in outputs:
+            # row is a list of dicts: [{'label': 'LABEL_0', 'score': p0}, {'label':'LABEL_1','score': p1}]
+            # make sure ordering is consistent: sort by label id if possible
+            # build map label->score
+            m = {d["label"]: d["score"] for d in row} # type: ignore
+            # heuristics to fetch p1
+            # try label names in id2label; else fall back to lexicographic
+            labels = [self.id2label.get(i, f"LABEL_{i}") for i in range(len(row))]
+            try:
+                p1 = float(m[labels[self.pos_idx]])
+            except Exception:
+                # fallback: try LABEL_1 or the last element
+                p1 = float(m.get("LABEL_1", row[-1]["score"])) # type: ignore
+            p0 = 1.0 - p1
+            probs.append([p0, p1])
+        return np.asarray(probs, dtype=float)
+
+
 @st.cache_data(show_spinner="Loading model...")
 def load_pipeline(model_dir: str):
     """
-    Load a trained sklearn pipeline from the specified directory.
-    Accepts absolute or repo-root-relative paths.
+    Load either:
+    - sklearn pipeline from <model_dir>/{pipeline.joblib,model.joblib}
+    - or a Hugging Face transformer from <model_dir> (root or checkpoint-*).
+    Returns an object with either:
+    - sklearn pipeline (has predict_proba/decision_function), or
+    - _HFWrapper (has predict_proba(df))
     """
     model_dir_path = Path(model_dir)
     if not model_dir_path.is_absolute():
         model_dir_path = (REPO_ROOT / model_dir_path).resolve()
 
+    # 1) Try sklearn first (keeps existing behaviour)
     p = model_dir_path / MODEL_FILE_NAME
-    if not p.exists():
-        alt = model_dir_path / "model.joblib"
-        if alt.exists():
-            p = alt
-        else:
-            raise FileNotFoundError(
-                f"No model file found in {model_dir_path} "
-                f"(looked for '{MODEL_FILE_NAME}' and 'model.joblib')."
-            )
+    if p.exists():
+        pipe = load(p)
+        try:
+            check_is_fitted(pipe)
+        except Exception:
+            pass
+        return pipe
 
-    pipe = load(p)
-    try:
-        check_is_fitted(pipe)
-    except Exception:
-        pass
-    return pipe
+    alt = model_dir_path / "model.joblib"
+    if alt.exists():
+        pipe = load(alt)
+        try:
+            check_is_fitted(pipe)
+        except Exception:
+            pass
+        return pipe
+
+    # 2) Try Hugging Face
+    if not HF_AVAILABLE:
+        raise FileNotFoundError(
+            f"No sklearn model file found in {model_dir_path} and transformers not available."
+        )
+
+    # If user points to the parent folder (e.g., models/.../transformer_distilroberta-base),
+    # pick the best checkpoint inside it. If they point to a checkpoint-* folder, use it as-is.
+    hf_root = model_dir_path
+    if (model_dir_path / "config.json").exists():
+        hf_ckpt = model_dir_path
+    else:
+        hf_ckpt = best_hf_checkpoint(hf_root)
+
+    if not is_hf_model_dir(hf_ckpt):
+        raise FileNotFoundError(
+            f"Could not find a Hugging Face checkpoint in {model_dir_path} "
+            f"(looked at {hf_ckpt}). Expected config.json/tokenizer files."
+        )
+
+    # Device hint: MPS on Apple, CUDA else CPU
+    device = -1
+    if torch.backends.mps.is_available(): # type: ignore
+        device = 0  # transformers treats mps as device 0
+        torch_dtype = torch.float32 # type: ignore
+    elif torch.cuda.is_available(): # type: ignore
+        device = 0
+        torch_dtype = torch.float16 # type: ignore
+    else:
+        torch_dtype = torch.float32 # type: ignore
+
+    tokenizer = AutoTokenizer.from_pretrained(str(hf_ckpt)) # type: ignore
+    model = AutoModelForSequenceClassification.from_pretrained(str(hf_ckpt), torch_dtype=torch_dtype) # type: ignore
+
+    hf_pipe = TextClassificationPipeline( # type: ignore
+        model=model,
+        tokenizer=tokenizer,
+        device=device,
+        top_k=None,            # we’ll ask for all scores
+        return_all_scores=True, # ensures both classes
+        batch_size=16,
+    )
+
+    id2label = model.config.id2label if hasattr(model.config, "id2label") else {0: "LABEL_0", 1: "LABEL_1"}
+    return HFWrapper(hf_pipe, id2label)
+
 
 
 def predict_proba_safe(pipeline, df_2col: pd.DataFrame):
-    """
-    Return probabilities for 2 class models; fallback to decision function or predict
-    """
+    # Hugging Face wrapper
+    if isinstance(pipeline, HFWrapper):
+        return pipeline.predict_proba(df_2col)
+
+    # sklearn branches (your existing code) ...
     if hasattr(pipeline, "predict_proba"):
         proba = pipeline.predict_proba(df_2col)
-        
         if proba.ndim == 1 or proba.shape[1] == 1:
             p1 = proba.ravel().astype(float)
             p0 = 1.0 - p1
-            
             return np.vstack([p0, p1]).T
-        
         return proba
     
     elif hasattr(pipeline, "decision_function"):
         scores = np.asarray(pipeline.decision_function(df_2col), dtype=float)
-        
         if scores.ndim == 1:
             p1 = 1.0 / (1.0 + np.exp(-scores))
             p0 = 1.0 - p1
-
             return np.vstack([p0, p1]).T
         
         e = np.exp(scores - np.max(scores, axis=1, keepdims=True))
@@ -129,6 +249,7 @@ def predict_proba_safe(pipeline, df_2col: pd.DataFrame):
     p0 = 1.0 - p1
     
     return np.vstack([p0, p1]).T
+
 
 def lime_explain_for_single_text(pipeline, text: str, sender: str, num_features: int = 10):
     """
@@ -147,6 +268,7 @@ def lime_explain_for_single_text(pipeline, text: str, sender: str, num_features:
         text_instance=text,
         classifier_fn=classifier_fn,
         num_features=num_features,
+        num_samples=1000,
     )
 
     return exp
