@@ -196,15 +196,15 @@ def load_pipeline(model_dir: str):
     device = -1
     if torch.backends.mps.is_available(): # type: ignore
         device = 0  # transformers treats mps as device 0
-        torch_dtype = torch.float32 # type: ignore
+        dtype = torch.float32 # type: ignore
     elif torch.cuda.is_available(): # type: ignore
         device = 0
-        torch_dtype = torch.float16 # type: ignore
+        dtype = torch.float16 # type: ignore
     else:
-        torch_dtype = torch.float32 # type: ignore
+        dtype = torch.float32 # type: ignore
 
     tokenizer = AutoTokenizer.from_pretrained(str(hf_ckpt)) # type: ignore
-    model = AutoModelForSequenceClassification.from_pretrained(str(hf_ckpt), torch_dtype=torch_dtype) # type: ignore
+    model = AutoModelForSequenceClassification.from_pretrained(str(hf_ckpt), dtype=dtype) # type: ignore
 
     hf_pipe = TextClassificationPipeline( # type: ignore
         model=model,
@@ -339,7 +339,7 @@ def render_factcheck_panel(res):
             rows.append(flat)
         if rows:
             st.markdown("**Evidence Details**")
-            st.dataframe(pd.DataFrame(rows), use_container_width=True)
+            st.dataframe(pd.DataFrame(rows), width="stretch")
 
 
 # ---- Controls ----
@@ -450,7 +450,7 @@ if submitted:
             
             if as_list:
                 df_feat = pd.DataFrame(as_list, columns=["token/feature", "weight"])
-                st.dataframe(df_feat, use_container_width=True)
+                st.dataframe(df_feat, width="stretch")
             try:
                 import streamlit.components.v1 as components
                 components.html(exp.as_html(), height=500, scrolling=True)

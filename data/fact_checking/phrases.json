@@ -23,5 +23,16 @@
     "credential_access": ["verify your account", "reset your password", "confirm identity"],
     "payment_urgency": ["wire immediately", "gift card", "bitcoin wallet"],
     "threat_or_consequence": ["final notice", "account will be deleted"],
-    "misc_generic": ["click here", "follow this link"]
+    "misc_generic": ["click here", "follow this link"],
+    "inheritence" : ["inheritance", "beneficiary", "will", "estate", "trust", "deceased", "inherit", "legacy", "testament", "heir", "probate", "executor"],
+    "people" : ["ceo", "founder", "president", "director", "manager", "officer", "executive", "leader", "head", "administrator", "supervisor", "coordinator"],
+    "urgent_finance_high" : ["urgent payment", "immediate transfer", "pay now", "urgent wire", "final notice payment"],
+    "safety_security" : ["security alert", "safety warning", "data breach", "account compromised", "security update", "urgent security", "safety notice"],
+    "legal_threats" : ["legal action", "court order", "lawsuit", "legal notice", "compliance warning", "regulatory action", "legal consequences"],
+    "illegitimate_greetings": ["dear customer", "valued client", "respected user", "honored member", "esteemed patron", "dear sir or madam"],
+    "exaggerated_claims": ["once in a lifetime", "unbelievable offer", "too good to be true", "miracle solution", "guaranteed results", "life-changing opportunity", "get rich quick", "You won't believe", "You've won a prize!"],
+    "unexpected_delivery": ["unexpected package", "undelivered parcel", "delivery attempt", "missed delivery", "package on hold", "delivery issue", "shipment delay"],
+    "suspicious_attachments": ["see attached", "please find attached", "attachment included", "document attached", "file enclosed", "attachment for your review"],
+    "fake_urgency": ["act now", "limited time", "last chance", "urgent response needed", "immediate action required", "don't miss out"],
+    "generic_salutations": ["hello", "hi there", "greetings", "dear friend", "good day", "salutations"]
 }
