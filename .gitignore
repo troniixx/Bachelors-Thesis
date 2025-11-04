@@ -1,4 +1,6 @@
 *.csv
+!clean_tlds.csv
+!brands.csv
 *.tar.gz
 __pycache__/
 .code-workspace
