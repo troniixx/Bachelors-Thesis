@@ -1,0 +1,112 @@
+{
+  "folds": [
+    {
+      "accuracy": 0.9741023444193473,
+      "precision": 0.9677137870855148,
+      "recall": 0.9836647202306157,
+      "f1": 0.9756240607015871,
+      "roc_auc": 0.9971218453238563,
+      "pr_auc": 0.9974343483217256,
+      "confusion_matrix": [
+        [
+          11705,
+          444
+        ],
+        [
+          221,
+          13308
+        ]
+      ],
+      "classification_report": "              precision    recall  f1-score   support\n\n           0      0.981     0.963     0.972     12149\n           1      0.968     0.984     0.976     13529\n\n    accuracy                          0.974     25678\n   macro avg      0.975     0.974     0.974     25678\nweighted avg      0.974     0.974     0.974     25678\n",
+      "fold": 1
+    },
+    {
+      "accuracy": 0.9767894695848587,
+      "precision": 0.9705989374863547,
+      "recall": 0.9858082637297657,
+      "f1": 0.9781444811147781,
+      "roc_auc": 0.9971730427220964,
+      "pr_auc": 0.9972824596100018,
+      "confusion_matrix": [
+        [
+          11745,
+          404
+        ],
+        [
+          192,
+          13337
+        ]
+      ],
+      "classification_report": "              precision    recall  f1-score   support\n\n           0      0.984     0.967     0.975     12149\n           1      0.971     0.986     0.978     13529\n\n    accuracy                          0.977     25678\n   macro avg      0.977     0.976     0.977     25678\nweighted avg      0.977     0.977     0.977     25678\n",
+      "fold": 2
+    },
+    {
+      "accuracy": 0.9752696966156482,
+      "precision": 0.9711320616823796,
+      "recall": 0.9822590183323477,
+      "f1": 0.976663849178641,
+      "roc_auc": 0.9967979851157217,
+      "pr_auc": 0.9969395214145786,
+      "confusion_matrix": [
+        [
+          11754,
+          395
+        ],
+        [
+          240,
+          13288
+        ]
+      ],
+      "classification_report": "              precision    recall  f1-score   support\n\n           0      0.980     0.967     0.974     12149\n           1      0.971     0.982     0.977     13528\n\n    accuracy                          0.975     25677\n   macro avg      0.976     0.975     0.975     25677\nweighted avg      0.975     0.975     0.975     25677\n",
+      "fold": 3
+    },
+    {
+      "accuracy": 0.9747634069400631,
+      "precision": 0.9695931165232609,
+      "recall": 0.9829243051448847,
+      "f1": 0.9762132002055649,
+      "roc_auc": 0.9969177344298633,
+      "pr_auc": 0.9971800467574712,
+      "confusion_matrix": [
+        [
+          11732,
+          417
+        ],
+        [
+          231,
+          13297
+        ]
+      ],
+      "classification_report": "              precision    recall  f1-score   support\n\n           0      0.981     0.966     0.973     12149\n           1      0.970     0.983     0.976     13528\n\n    accuracy                          0.975     25677\n   macro avg      0.975     0.974     0.975     25677\nweighted avg      0.975     0.975     0.975     25677\n",
+      "fold": 4
+    },
+    {
+      "accuracy": 0.9750360244576859,
+      "precision": 0.9709816533879102,
+      "recall": 0.9819633353045535,
+      "f1": 0.9764416185820868,
+      "roc_auc": 0.9971368834020745,
+      "pr_auc": 0.9974292978260371,
+      "confusion_matrix": [
+        [
+          11752,
+          397
+        ],
+        [
+          244,
+          13284
+        ]
+      ],
+      "classification_report": "              precision    recall  f1-score   support\n\n           0      0.980     0.967     0.973     12149\n           1      0.971     0.982     0.976     13528\n\n    accuracy                          0.975     25677\n   macro avg      0.975     0.975     0.975     25677\nweighted avg      0.975     0.975     0.975     25677\n",
+      "fold": 5
+    }
+  ],
+  "aggregate": {
+    "accuracy": 0.9751921884035207,
+    "precision": 0.970003911233084,
+    "recall": 0.9833239285484334,
+    "f1": 0.9766174419565317,
+    "roc_auc": 0.9970294981987224,
+    "pr_auc": 0.9972531347859629
+  }
+}
