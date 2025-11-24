@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # download_data.sh
 # Copyright (c) 2025 Mert Erol
+# Use this only if you do not have the datasets in the data/ folder yet.
 
 set -euo pipefail
 

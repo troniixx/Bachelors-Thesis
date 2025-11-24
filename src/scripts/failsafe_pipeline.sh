@@ -3,6 +3,7 @@
 # Licensed under the Academic and Educational Use License (AEUL) – see LICENSE file for details.
 
 # NOTE: This script is only there for failsafe. The main runner is run_pipeline.sh
+# NOTE: Unexpected behavior may occur if you run this
 set -euo pipefail
 
 ############################################
