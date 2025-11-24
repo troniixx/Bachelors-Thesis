@@ -59,6 +59,7 @@ Bachelors-Thesis/
 	```
 3. (Optional) If using the transformer-based model, ensure PyTorch and Transformers are installed with MPS or GPU support.
 4. Run the download_dataets.sh script in src/scripts if there are no datasets visible in data/
+NOTE: Depending on the current workload/requests send to Google Drive, this might need a couple tries. As a fallback you can manually download the data by visiting the link shown in the error message.
 
 
 ## 🧩 Running the Interactive App and Model Selection
@@ -70,7 +71,7 @@ Bachelors-Thesis/
 	streamlit run app/app.py
 	```
 3. Paste or simulate an email, adjust the threshold, and view predictions with LIME explanations and optional FactChecker analysis.
-4. Select model by changing the directory path on the right hand side of the interface (the default is the DistilRoBERTa Transformer). Make sure the whole folder is selected rather than single files inside.
+4. Select model by changing the directory path on the right hand side of the interface (the default is the DistilRoBERTa Transformer). Make sure the whole folder path is used rather than single files inside.
 
 ## 🧠 Methodological Summary
 
@@ -85,7 +86,8 @@ Bachelors-Thesis/
 
 ## 🔧 Training your own models
 
-If there are no datasets visible in data/ make sure you have run the download_datasets.sh script before starting.
+If there are no datasets visible in data/ run the download_datasets.sh script before starting.
+Depending on the current workload/requests send to Google Drive, this might need a couple tries. As a fallback you can manually download the data by visiting the link shown in the error message.
 
 ```bash 
 chmod +x scripts/download_datasets.sh
