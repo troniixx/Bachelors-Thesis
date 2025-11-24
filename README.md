@@ -58,7 +58,7 @@ Bachelors-Thesis/
 	pip install -r requirements.txt
 	```
 3. (Optional) If using the transformer-based model, ensure PyTorch and Transformers are installed with MPS or GPU support.
-4. Run the download_dataets.sh script in src/scripts
+4. Run the download_dataets.sh script in src/scripts if there are no datasets visible in data/
 
 
 ## 🧩 Running the Interactive App and Model Selection
@@ -85,7 +85,7 @@ Bachelors-Thesis/
 
 ## 🔧 Training your own models
 
-Make sure you have run the download_datasets.sh script before starting.
+If there are no datasets visible in data/ make sure you have run the download_datasets.sh script before starting.
 
 ```bash 
 chmod +x scripts/download_datasets.sh
@@ -95,6 +95,7 @@ chmod +x scripts/download_datasets.sh
 1. Use the models provided in src/models/baselines.py or adjust the file according to your wishes! (Make sure to keep the format)
 2. You can change configs like number of K_folds and TF_IDF values inside of src/models/config.py
 3. Once all the configs are completed, run the pipeline:
+WARNING: This will take a while!
 ```bash
 	chmod +x scripts/run_pipeline.sh
 	./run_pipeline.sh
