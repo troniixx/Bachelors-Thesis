@@ -1,0 +1,3 @@
+[LIME] explanation saved to /Users/merterol/Desktop/Bachelors-Thesis/models/runs/20251022-124353/artifacts/explain/sbertfc/lime_explanation.html
+[LIME] Top features: [(np.str_('account'), 0.22874569193923616), (np.str_('secure'), 0.224251239631282), (np.str_('requires'), -0.17038033107587144), (np.str_('settings'), -0.17034603478544613), (np.str_('brief'), 0.1568067194077665), (np.str_('session'), -0.11560251907885061), (np.str_('continue'), 0.10301023132989623), (np.str_('a'), -0.08465693605234736), (np.str_('sign'), -0.07721420317919157), (np.str_('Your'), 0.06491200122123279)]
+[SHAP] global summary plot saved to /Users/merterol/Desktop/Bachelors-Thesis/models/runs/20251022-124353/artifacts/explain/sbertfc/shap_summary.png
