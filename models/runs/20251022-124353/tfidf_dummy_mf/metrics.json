@@ -1,0 +1,112 @@
+{
+  "folds": [
+    {
+      "accuracy": 0.5268712516551133,
+      "precision": 0.5268712516551133,
+      "recall": 1.0,
+      "f1": 0.690131864207922,
+      "roc_auc": 0.5,
+      "pr_auc": 0.5268712516551133,
+      "confusion_matrix": [
+        [
+          0,
+          12149
+        ],
+        [
+          0,
+          13529
+        ]
+      ],
+      "classification_report": "              precision    recall  f1-score   support\n\n           0      0.000     0.000     0.000     12149\n           1      0.527     1.000     0.690     13529\n\n    accuracy                          0.527     25678\n   macro avg      0.263     0.500     0.345     25678\nweighted avg      0.278     0.527     0.364     25678\n",
+      "fold": 1
+    },
+    {
+      "accuracy": 0.5268712516551133,
+      "precision": 0.5268712516551133,
+      "recall": 1.0,
+      "f1": 0.690131864207922,
+      "roc_auc": 0.5,
+      "pr_auc": 0.5268712516551133,
+      "confusion_matrix": [
+        [
+          0,
+          12149
+        ],
+        [
+          0,
+          13529
+        ]
+      ],
+      "classification_report": "              precision    recall  f1-score   support\n\n           0      0.000     0.000     0.000     12149\n           1      0.527     1.000     0.690     13529\n\n    accuracy                          0.527     25678\n   macro avg      0.263     0.500     0.345     25678\nweighted avg      0.278     0.527     0.364     25678\n",
+      "fold": 2
+    },
+    {
+      "accuracy": 0.5268528254858433,
+      "precision": 0.5268528254858433,
+      "recall": 1.0,
+      "f1": 0.6901160566254304,
+      "roc_auc": 0.5,
+      "pr_auc": 0.5268528254858433,
+      "confusion_matrix": [
+        [
+          0,
+          12149
+        ],
+        [
+          0,
+          13528
+        ]
+      ],
+      "classification_report": "              precision    recall  f1-score   support\n\n           0      0.000     0.000     0.000     12149\n           1      0.527     1.000     0.690     13528\n\n    accuracy                          0.527     25677\n   macro avg      0.263     0.500     0.345     25677\nweighted avg      0.278     0.527     0.364     25677\n",
+      "fold": 3
+    },
+    {
+      "accuracy": 0.5268528254858433,
+      "precision": 0.5268528254858433,
+      "recall": 1.0,
+      "f1": 0.6901160566254304,
+      "roc_auc": 0.5,
+      "pr_auc": 0.5268528254858433,
+      "confusion_matrix": [
+        [
+          0,
+          12149
+        ],
+        [
+          0,
+          13528
+        ]
+      ],
+      "classification_report": "              precision    recall  f1-score   support\n\n           0      0.000     0.000     0.000     12149\n           1      0.527     1.000     0.690     13528\n\n    accuracy                          0.527     25677\n   macro avg      0.263     0.500     0.345     25677\nweighted avg      0.278     0.527     0.364     25677\n",
+      "fold": 4
+    },
+    {
+      "accuracy": 0.5268528254858433,
+      "precision": 0.5268528254858433,
+      "recall": 1.0,
+      "f1": 0.6901160566254304,
+      "roc_auc": 0.5,
+      "pr_auc": 0.5268528254858433,
+      "confusion_matrix": [
+        [
+          0,
+          12149
+        ],
+        [
+          0,
+          13528
+        ]
+      ],
+      "classification_report": "              precision    recall  f1-score   support\n\n           0      0.000     0.000     0.000     12149\n           1      0.527     1.000     0.690     13528\n\n    accuracy                          0.527     25677\n   macro avg      0.263     0.500     0.345     25677\nweighted avg      0.278     0.527     0.364     25677\n",
+      "fold": 5
+    }
+  ],
+  "aggregate": {
+    "accuracy": 0.5268601959535513,
+    "precision": 0.5268601959535513,
+    "recall": 1.0,
+    "f1": 0.690122379658427,
+    "roc_auc": 0.5,
+    "pr_auc": 0.5268601959535513
+  }
+}
