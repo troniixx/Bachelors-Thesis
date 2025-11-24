@@ -1,5 +1,7 @@
 #!/bin/bash
 # download_data.sh
+# Copyright (c) 2025 Mert Erol
+
 set -e  # stop if any command fails
 
 echo "⬇️  Downloading datasets from Google Drive..."
