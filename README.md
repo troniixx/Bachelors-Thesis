@@ -33,15 +33,17 @@ Bachelors-Thesis/
 │  └──  ...
 │
 ├──  models/  # Trained pipelines and checkpoints
-│  └──  tmp_sanity/pipeline.joblib
-│  └──  pipeline_logreg.joblib
-│  └──  ...
+│  └──  runs/
+│  		└──  20251022-124353 # Models trained by me provided to test
+│  		└──  dated_run # Folder with models trained by you!
+│  			└──  model_file
 │
 ├──  feedback/  # User feedback (created automatically)
 │  └──  feedback.csv
 │
 ├──  requirements.txt
 ├──  README.md
+├──  LICENSE
 ```
 
 ## ⚙️ Installation
@@ -56,9 +58,10 @@ Bachelors-Thesis/
 	pip install -r requirements.txt
 	```
 3. (Optional) If using the transformer-based model, ensure PyTorch and Transformers are installed with MPS or GPU support.
+4. Run the download_dataets.sh script in src/scripts
 
 
-## 🧩 Running the Interactive App
+## 🧩 Running the Interactive App and Model Selection
 
 1. Train or place your model in the models/ directory (for example, models/pipeline_logreg.joblib or models/transformer_distilroberta-base/).
 
@@ -67,6 +70,7 @@ Bachelors-Thesis/
 	streamlit run app/app.py
 	```
 3. Paste or simulate an email, adjust the threshold, and view predictions with LIME explanations and optional FactChecker analysis.
+4. Select model by changing the directory path on the right hand side of the interface (the default is the DistilRoBERTa Transformer). Make sure the whole folder is selected rather than single files inside.
 
 ## 🧠 Methodological Summary
 
@@ -79,13 +83,29 @@ Bachelors-Thesis/
 | **Evaluation** | Accuracy, F1-score, ROC-AUC, cross-validation, robustness test on Enron |
 | **Prototype** | Streamlit UI for single-email analysis with interactive explanations and user feedback collection |
 
-## 🧪 Example Usage
+## 🔧 Training your own models
 
-Running the interactive prototype:
-	```
-	streamlit run app/app.py
-	```
+Make sure you have run the download_datasets.sh script before starting.
 
+```bash 
+chmod +x scripts/download_datasets.sh
+./download_datasets.sh
+```
+
+1. Use the models provided in src/models/baselines.py or adjust the file according to your wishes! (Make sure to keep the format)
+2. You can change configs like number of K_folds and TF_IDF values inside of src/models/config.py
+3. Once all the configs are completed, run the pipeline:
+```bash
+	chmod +x scripts/run_pipeline.sh
+	./run_pipeline.sh
+```
+
+- Files needed to run inside the prototype will be saved in models/runs/YOUR_RUN/MODEL_NAME
+- Predictions on the Enron email corpus will be saved in runs/YOUR_RUN/artifacts/preds
+  
+## 📋 Fact Checker
+
+If you wish to make the Fact Checker be much more detailed, use the files inside data/fact_checking to further add more depth into the rule based system.
 
 ## 🔒 Privacy and Ethics
 
