@@ -1,0 +1,5 @@
+[load_csv] Loaded data/baseline_spam-ham.csv with 84912 rows and columns: {'text', 'label'}
+[load_baseline] Warning: dropping 1464 rows with unrecognized labels. Examples: ['associated press newswires', 'copyright 2001 . the associated press . all rights reserved .', 'the flop has made consumers elsewhere suspicious about giving up their regulated monopoly utilities for competition among power companies .', 'regulators and industry officials are turning their attention to texas ', 'california officials warn that texans may be a little too smug .']
+[load_csv] Loaded data/spam_assassin_cleaned.csv with 5786 rows and columns: {'sender', 'target', 'text'}
+[load_csv] Loaded data/zenodo_cleaned.csv with 39153 rows and columns: {'urls', 'receiver', 'body', 'subject', 'label', 'sender', 'date'}
+[load_many] merged rows: 128387  (ham=60745, spam=67642)

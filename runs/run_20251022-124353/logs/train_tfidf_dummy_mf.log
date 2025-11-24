@@ -1,0 +1,10 @@
+[train] Using datasets: ['/Users/merterol/Desktop/Bachelors-Thesis/data/baseline_spam-ham.csv', '/Users/merterol/Desktop/Bachelors-Thesis/data/spam_assassin_cleaned.csv', '/Users/merterol/Desktop/Bachelors-Thesis/data/zenodo_cleaned.csv']
+[load_csv] Loaded /Users/merterol/Desktop/Bachelors-Thesis/data/baseline_spam-ham.csv with 84912 rows and columns: {'text', 'label'}
+[load_baseline] Warning: dropping 1464 rows with unrecognized labels. Examples: ['associated press newswires', 'copyright 2001 . the associated press . all rights reserved .', 'the flop has made consumers elsewhere suspicious about giving up their regulated monopoly utilities for competition among power companies .', 'regulators and industry officials are turning their attention to texas ', 'california officials warn that texans may be a little too smug .']
+[load_csv] Loaded /Users/merterol/Desktop/Bachelors-Thesis/data/spam_assassin_cleaned.csv with 5786 rows and columns: {'target', 'text', 'sender'}
+[load_csv] Loaded /Users/merterol/Desktop/Bachelors-Thesis/data/zenodo_cleaned.csv with 39153 rows and columns: {'label', 'receiver', 'sender', 'date', 'urls', 'body', 'subject'}
+[load_many] merged rows: 128387  (ham=60745, spam=67642)
+[train] Loaded 128387 rows
+[train] Average metrics: {'accuracy': 0.5268601959535513, 'precision': 0.5268601959535513, 'recall': 1.0, 'f1': 0.690122379658427, 'roc_auc': 0.5, 'pr_auc': 0.5268601959535513}
+Saved model to /Users/merterol/Desktop/Bachelors-Thesis/models/runs/20251022-124353/tfidf_dummy_mf/pipeline.joblib
+Saved metrics to /Users/merterol/Desktop/Bachelors-Thesis/models/runs/20251022-124353/tfidf_dummy_mf/metrics.json
