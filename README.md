@@ -125,16 +125,16 @@ If the script errors, simply run it again. As a fallback, manually download the 
 
 	All baseline models are defined in ```src/models/baselines.py ```
 	You may:
-	   - Use the models already provided, or
-	   - customize/extend them (ensure you keep the same return format so the pipeline remains compatible).
+	- Use the models already provided, or
+	- customize/extend them (ensure you keep the same return format so the pipeline remains compatible).
 
 2. Adjust Configurations (optional)
 
 	Global settungs such as:
-	   - number of cross-validation folds
-	   - TF-IDF parameters
-	   - output directories
-	   - model hyperparameters
+	- number of cross-validation folds
+	- TF-IDF parameters
+	- output directories
+	- model hyperparameters
 	can be changed in: ```src/models/config.py```
 
 3. Run the full training pipeline
