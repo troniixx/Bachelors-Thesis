@@ -119,13 +119,15 @@ chmod +x src/scripts/download_datasets.sh
 ./src/scripts/download_datasets.sh
 ```
 Note: Google Drive rate limits can occasionally cause failures.
-If the script errors, simply run it again. As a fallback, manually download the files using the link shown in the error message. 
+If the script errors, simply run it again. As a fallback, manually download the files using the link shown in the error message.
+
 1. Choose or customize a model
 
 All baseline models are defined in ```src/models/baselines.py ```
 You may:
    - Use the models already provided, or
    - customize/extend them (ensure you keep the same return format so the pipeline remains compatible).
+   - 
 2. Adjust Configurations (optional)
 
 Global settungs such as:
@@ -134,6 +136,7 @@ Global settungs such as:
    - output directories
    - model hyperparameters
 can be changed in: ```src/models/config.py```
+
 3. Run the full training pipeline
 
 Once your models and configurations are ready, start the training process:
@@ -143,6 +146,7 @@ chmod +x src/scripts/run_pipeline.sh
 ```
 ⚠️ Warning:
 This process may take a long time, especially when training SBERT or transformer-based models.
+
 4. Where outputs are saved
 
 After the pipeline completes:
