@@ -91,12 +91,12 @@ As a fallback, you can manually download the datasets using the link printed in 
 streamlit run app/app.py
 ```
 
-3. Use the interface:
+1. Use the interface:
    - Paste or simulate an email.
    - Adjust the prediction threshold using the sidebar slider.
    - View the model output, LIME explanations and optional FactChecker results.
   
-4. Select a model in the sidebar:
+2. Select a model in the sidebar:
 	On the right-hand side of the prototype (Streamlit sidebar), choose the model directory to load.
 	- Important: When selecting models, choose the entire folder path, not individual files inside it.
 
@@ -120,14 +120,12 @@ chmod +x src/scripts/download_datasets.sh
 ```
 Note: Google Drive rate limits can occasionally cause failures.
 If the script errors, simply run it again. As a fallback, manually download the files using the link shown in the error message. 
-
 1. Choose or customize a model
 
-All baseline models are defined in ```bash src/models/baselines.py ```
+All baseline models are defined in ```src/models/baselines.py ```
 You may:
    - Use the models already provided, or
    - customize/extend them (ensure you keep the same return format so the pipeline remains compatible).
-
 2. Adjust Configurations (optional)
 
 Global settungs such as:
@@ -135,8 +133,7 @@ Global settungs such as:
    - TF-IDF parameters
    - output directories
    - model hyperparameters
-can be changed in: ```bash src/models/config.py```
-
+can be changed in: ```src/models/config.py```
 3. Run the full training pipeline
 
 Once your models and configurations are ready, start the training process:
@@ -146,7 +143,6 @@ chmod +x src/scripts/run_pipeline.sh
 ```
 ⚠️ Warning:
 This process may take a long time, especially when training SBERT or transformer-based models.
-
 4. Where outputs are saved
 
 After the pipeline completes:
