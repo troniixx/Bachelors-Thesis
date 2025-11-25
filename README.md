@@ -3,16 +3,18 @@
 
 ## 𝌞 Table of Contents
 
-1. Overview [Link Text](#-overview)
-2. Project Structure [Link Text](#️-project-structure)
-3. Installation [Link Text](#️-installation)
-4. Running the App [Link Text](#-running-the-interactive-app-and-model-selection)
-5. Methodology [Link Text](#-methodological-summary)
-6. Training your own models [Link Text](#-training-your-own-models)
-7. Fact Checker [Link Text](#-fact-checker)
-8. Privacy and Ethics [Link Text](#-privacy-and-ethics)
-9. Citation [Link Text](#-citation)
-10. Future Work [Link Text](#️-future-work)
+- [📘 Bachelors Thesis - Explainable Phishing Detection](#-bachelors-thesis---explainable-phishing-detection)
+	- [𝌞 Table of Contents](#-table-of-contents)
+	- [🧠 Overview](#-overview)
+	- [🏗️ Project Structure](#️-project-structure)
+	- [⚙️ Installation](#️-installation)
+	- [🧩 Running the Interactive App and Model Selection](#-running-the-interactive-app-and-model-selection)
+	- [🧠 Methodological Summary](#-methodological-summary)
+	- [🔧 Training your own models](#-training-your-own-models)
+	- [📋 Fact Checker](#-fact-checker)
+	- [🔒 Privacy and Ethics](#-privacy-and-ethics)
+	- [📑 Citation](#-citation)
+	- [🛠️ Future Work](#️-future-work)
 
 ## 🧠 Overview
 
