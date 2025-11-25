@@ -59,7 +59,7 @@ Bachelors-Thesis/
 	python3 -m venv venv
 	source venv/bin/activate
 	```
-	
+
 2. Install dependencies.
 	```bash
 	pip install -r requirements.txt
@@ -113,26 +113,51 @@ streamlit run app/app.py
 
 ## 🔧 Training your own models
 
-If there are no datasets visible in data/ run the download_datasets.sh script before starting.
-Depending on the current workload/requests send to Google Drive, this might need a couple tries. As a fallback you can manually download the data by visiting the link shown in the error message.
-
-```bash 
-chmod +x scripts/download_datasets.sh
-./download_datasets.sh
-```
-
-1. Use the models provided in src/models/baselines.py or adjust the file according to your wishes! (Make sure to keep the format)
-2. You can change configs like number of K_folds and TF_IDF values inside of src/models/config.py
-3. Once all the configs are completed, run the pipeline:
-WARNING: This will take a while!
+If the data/ directory is empty, download the datasets first:
 ```bash
-	chmod +x scripts/run_pipeline.sh
-	./run_pipeline.sh
+chmod +x src/scripts/download_datasets.sh
+./src/scripts/download_datasets.sh
 ```
+Note: Google Drive rate limits can occasionally cause failures.
+If the script errors, simply run it again. As a fallback, manually download the files using the link shown in the error message. 
 
-- Files needed to run inside the prototype will be saved in models/runs/YOUR_RUN/MODEL_NAME
-- Predictions on the Enron email corpus will be saved in runs/YOUR_RUN/artifacts/preds
+1. Choose or customize a model
+
+All baseline models are defined in ```bash src/models/baselines.py ```
+You may:
+   - Use the models already provided, or
+   - customize/extend them (ensure you keep the same return format so the pipeline remains compatible).
+
+2. Adjust Configurations (optional)
+
+Global settungs such as:
+   - number of cross-validation folds
+   - TF-IDF parameters
+   - output directories
+   - model hyperparameters
+can be changed in: ```bash src/models/config.py```
+
+3. Run the full training pipeline
+
+Once your models and configurations are ready, start the training process:
+```bash
+chmod +x src/scripts/run_pipeline.sh
+./src/scripts/run_pipeline.sh
+```
+⚠️ Warning:
+This process may take a long time, especially when training SBERT or transformer-based models.
+
+4. Where outputs are saved
+
+After the pipeline completes:
+- Models for the prototype are saved under ```models/runs/YOUR_RUN/MODEL_NAME/```(These folders can be selected in the app)
+- Predicitions on the Enron holdout corpus are saved under ```runs/YOUR_RUN/artifacts/preds/```
   
+These artifacts support:
+	- quality inspection
+	- error analysis
+	- cross-domain robustness evaluation
+
 ## 📋 Fact Checker
 
 If you wish to make the Fact Checker be much more detailed, use the files inside data/fact_checking to further add more depth into the rule based system.
