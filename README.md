@@ -1,10 +1,10 @@
 
 # 📘 Bachelors Thesis - Explainable Phishing Detection
 
-## 𝌞 Table of Contents
+## 📚 Table of Contents
 
 - [📘 Bachelors Thesis - Explainable Phishing Detection](#-bachelors-thesis---explainable-phishing-detection)
-	- [𝌞 Table of Contents](#-table-of-contents)
+	- [📚 Table of Contents](#-table-of-contents)
 	- [🧠 Overview](#-overview)
 	- [🏗️ Project Structure](#️-project-structure)
 	- [⚙️ Installation](#️-installation)
