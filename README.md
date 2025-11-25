@@ -1,6 +1,19 @@
 
 # 📘 Bachelors Thesis - Explainable Phishing Detection
 
+## 𝌞 Table of Contents
+
+1. Overview [Link Text](#-overview)
+2. Project Structure [Link Text](#️-project-structure)
+3. Installation [Link Text](#️-installation)
+4. Running the App [Link Text](#-running-the-interactive-app-and-model-selection)
+5. Methodology [Link Text](#-methodological-summary)
+6. Training your own models [Link Text](#-training-your-own-models)
+7. Fact Checker [Link Text](#-fact-checker)
+8. Privacy and Ethics [Link Text](#-privacy-and-ethics)
+9. Citation [Link Text](#-citation)
+10. Future Work [Link Text](#️-future-work)
+
 ## 🧠 Overview
 
 This project explores how Explainable Artificial Intelligence (XAI) can improve phishing and spam email detection by combining high-performance machine learning models with transparent, user-friendly explanations.
@@ -160,13 +173,28 @@ If the script errors, simply run it again. As a fallback, manually download the 
 
 ## 📋 Fact Checker
 
-If you wish to make the Fact Checker be much more detailed, use the files inside data/fact_checking to further add more depth into the rule based system.
+The prototype includes a lightweight rule-based Fact Checker that highlights suspicious elements such as risky domains, obfuscated URLs, and brand inconsistencies.
+
+If you want to expand or refine these factual signals, you can modify or extend the resources located in:
+```data/fact_checking```
+
+These files allow you to:
+- add or update lists of trusted and untrusted domains,
+- include additional brand–domain mappings,
+- define new URL-risk patterns,
+- enrich rule sets used during explainability.
+
+The Fact Checker will automatically incorporate any additions the next time the app or pipeline runs, making it easy to build a more detailed and security-aware rule-based layer.
 
 ## 🔒 Privacy and Ethics
 
-This demo is designed for educational and research purposes only. All email samples are synthetic or sourced from public datasets.
+This prototype is intended solely for research and educational use. All example emails included in the project are synthetic or drawn from publicly available datasets.
 
-When using the prototype, do not paste any real personal or sensitive emails. Feedback is stored locally on your device only.
+When interacting with the app, do not paste real personal, confidential, or sensitive emails, as the system is not designed for processing private data.
+Any feedback you provide through the interface is stored locally on your machine only and is never transmitted elsewhere.
+
+The project emphasizes transparency and user awareness, but it should not be used as a production-level security tool without appropriate privacy, compliance and data-handling safeguards.
+
 ## 📑 Citation
 
 If you reference this work in your thesis or reports:
@@ -175,6 +203,17 @@ Mert Erol. Explainable Phishing Detection: Combining Machine Learning, Transform
 
 ## 🛠️ Future Work
 
-- Integrate fact checking API (e.g. company domain validation or WHOIS lookup)
-- Extend to multilingual phishing detection
-- Optional active learning loop where user feedback retrains the model
+- Integrate external fact-checking APIs
+Add live checks such as WHOIS lookups, brand-domain matching, or security-advisory verification to enhance factual explanations and detect impersonation attempts more reliably.
+- Extend to multilingual and cross-platform phishing detection
+Support emails in additional languages and evaluate performance on non-email communication channels (e.g., messaging apps, ticketing systems, or social platforms).
+- Improve explanation methods
+Explore more advanced XAI techniques such as Integrated Gradients, attention rollout, or transformer-optimized SHAP variants to provide more stable and faithful explanations.
+- Human-in-the-loop learning
+Turn user feedback from the prototype into a true active-learning loop. Corrections from users could be used to update the model over time and improve robustness against new phishing strategies.
+- Strengthen robustness and adversarial resilience
+Incorporate adversarial training, homoglyph normalization, or robust embedding models to handle obfuscated URLs, brand impersonation, or subtly rephrased phishing attempts.
+- Deployment in real-world email environments
+Integrate the system as an extension or plugin in an email client or security dashboard, enabling live phishing analysis and real-time explanations.
+- User-study driven evaluation
+Conduct controlled user studies to assess how explanations influence trust, understanding, and phishing-avoidance behavior, and iterate the interface based on usability findings.
