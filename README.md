@@ -123,37 +123,37 @@ If the script errors, simply run it again. As a fallback, manually download the 
 
 1. Choose or customize a model
 
-All baseline models are defined in ```src/models/baselines.py ```
-You may:
-   - Use the models already provided, or
-   - customize/extend them (ensure you keep the same return format so the pipeline remains compatible).
-   - 
+	All baseline models are defined in ```src/models/baselines.py ```
+	You may:
+	   - Use the models already provided, or
+	   - customize/extend them (ensure you keep the same return format so the pipeline remains compatible).
+
 2. Adjust Configurations (optional)
 
-Global settungs such as:
-   - number of cross-validation folds
-   - TF-IDF parameters
-   - output directories
-   - model hyperparameters
-can be changed in: ```src/models/config.py```
+	Global settungs such as:
+	   - number of cross-validation folds
+	   - TF-IDF parameters
+	   - output directories
+	   - model hyperparameters
+	can be changed in: ```src/models/config.py```
 
 3. Run the full training pipeline
 
-Once your models and configurations are ready, start the training process:
-```bash
-chmod +x src/scripts/run_pipeline.sh
-./src/scripts/run_pipeline.sh
-```
-⚠️ Warning:
-This process may take a long time, especially when training SBERT or transformer-based models.
+	Once your models and configurations are ready, start the training process:
+	```bash
+	chmod +x src/scripts/run_pipeline.sh
+	./src/scripts/run_pipeline.sh
+	```
+	⚠️ Warning:
+	This process may take a long time, especially when training SBERT or transformer-based models.
 
 4. Where outputs are saved
 
-After the pipeline completes:
-- Models for the prototype are saved under ```models/runs/YOUR_RUN/MODEL_NAME/```(These folders can be selected in the app)
-- Predicitions on the Enron holdout corpus are saved under ```runs/YOUR_RUN/artifacts/preds/```
+	After the pipeline completes:
+	- Models for the prototype are saved under ```models/runs/YOUR_RUN/MODEL_NAME/```(These folders can be selected in the app)
+	- Predicitions on the Enron holdout corpus are saved under ```runs/YOUR_RUN/artifacts/preds/```
   
-These artifacts support:
+	These artifacts support:
 	- quality inspection
 	- error analysis
 	- cross-domain robustness evaluation
