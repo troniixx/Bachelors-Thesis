@@ -3,11 +3,17 @@
 
 ## 🧠 Overview
 
-This project implements and evaluates Explainable Artificial Intelligence (XAI) techniques for phishing and spam email detection.
+This project explores how Explainable Artificial Intelligence (XAI) can improve phishing and spam email detection by combining high-performance machine learning models with transparent, user-friendly explanations.
 
-It combines classical machine learning and transformer-based classifiers with fact-checking features, LIME/SHAP explanations, and an optional interactive Streamlit prototype that demonstrates local interpretability for individual emails.
+It integrates:
+- Classical models (e.g., Logistic Regression, Naive Bayes, SVMs)
+- Transformer-based classifiers (DistilRoBERTa)
+- Factual risk indicators (domain validity, URL obfuscation, brand mismatch)
+- Local explanation methods (LIME)
 
-The goal is to make phishing detection transparent, educational, and secure, explaining why a message was flagged and allowing users to provide corrective feedback to improve future models.
+An interactive Streamlit prototype demonstrates how single-email predictions can be explained through token-level highlights and factual cues, and allow users to submit corrective feedback.
+
+The overarching goal is to create phishing detection systems that are not only accurate, but also transparent, educational and user-centered, helping users understand why a message was flagged and encouraging safer email behavior.
 
 
 ## 🏗️ Project Structure
@@ -53,25 +59,46 @@ Bachelors-Thesis/
 	python3 -m venv venv
 	source venv/bin/activate
 	```
+	
 2. Install dependencies.
 	```bash
 	pip install -r requirements.txt
 	```
-3. (Optional) If using the transformer-based model, ensure PyTorch and Transformers are installed with MPS or GPU support.
-4. Run the download_dataets.sh script in src/scripts if there are no datasets visible in data/
-NOTE: Depending on the current workload/requests send to Google Drive, this might need a couple tries. As a fallback you can manually download the data by visiting the link shown in the error message.
+
+3. (Optional) Enable transformer-based models
+If you plan to use the DistilRoBERTa model (or any other transformer), make sure PyTorch and transformers are installed with MPS/GPU support on your system
+
+4. Download datasets (if missing)
+   	Run the dataset download script:
+   	```bash
+	chmod +x src/scripts/download_datasets.sh
+	./src/scripts/download_datasets.sh
+   	```
+NOTE: Google Drive sometimes rate-limits downloads. If the script fails, simpy retry.
+As a fallback, you can manually download the datasets using the link printed in the error message.
 
 
 ## 🧩 Running the Interactive App and Model Selection
 
-1. Train or place your model in the models/ directory (for example, models/pipeline_logreg.joblib or models/transformer_distilroberta-base/).
+1. Place or train a model and store it inside the models/ directory.
+	Examples:
+	- models/runs/YOUR_RUNID/tfidf_bernoulli_nb
+	- models/runs/YOUR_RUNID/transformer_distilroberta-base
+	- models/runs/20251022-124353/transformer_distilroberta-base (default)
 
-2. Start the Streamlit interface.
-	```bash
-	streamlit run app/app.py
-	```
-3. Paste or simulate an email, adjust the threshold, and view predictions with LIME explanations and optional FactChecker analysis.
-4. Select model by changing the directory path on the right hand side of the interface (the default is the DistilRoBERTa Transformer). Make sure the whole folder path is used rather than single files inside.
+2. Start the Streamlit interface:
+```bash
+streamlit run app/app.py
+```
+
+3. Use the interface:
+   - Paste or simulate an email.
+   - Adjust the prediction threshold using the sidebar slider.
+   - View the model output, LIME explanations and optional FactChecker results.
+  
+4. Select a model in the sidebar:
+	On the right-hand side of the prototype (Streamlit sidebar), choose the model directory to load.
+	- Important: When selecting models, choose the entire folder path, not individual files inside it.
 
 ## 🧠 Methodological Summary
 
