@@ -44,7 +44,7 @@ Bachelors-Thesis/
 │  ├──  models/  # Training, model configs, evaluation scripts
 │  ├──  explain/  # LIME/SHAP explainability modules
 │  ├──  data/  # Dataset handling and preprocessing
-│  └──  helpers/  # Helper functions
+│  └──  helpers/  # Helper functions (This can be ignored since only the cleaned datasets have been pushed to this repo)
 │  └──  scripts/  # Shell scripts
 │
 ├──  data/  # Datasets (cleaned / unified CSVs)
