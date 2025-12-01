@@ -38,7 +38,7 @@ def clean_spamassassin(input_file: str, output_file: str) -> None:
 
     # Save back to CSV
     df.to_csv(output_file, index=False)
-    print(f"✅ Cleaned data written to {output_file}")
+    print(f"Cleaned data written to {output_file}")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Clean SpamAssassin CSV dataset.")

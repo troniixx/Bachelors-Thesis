@@ -70,8 +70,8 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-MODEL_DIR_DEFAULT = "models/runs/20251022-124353/transformer_distilroberta-base" # TODO: change to production model dir
-MODEL_FILE_NAME = "pipeline.joblib" # TODO: change to production model name
+MODEL_DIR_DEFAULT = "models/runs/20251022-124353/transformer_distilroberta-base"
+MODEL_FILE_NAME = "pipeline.joblib"
 FEEDBACK_PATH = Path("feedback/feedback.csv")
 CLASS_NAMES = ["Benign", "Phishing"]
 
